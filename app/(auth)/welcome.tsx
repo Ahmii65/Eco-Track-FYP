@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale } from "react-native-size-matters";
 
 const Welcome = () => {
-  const { top } = useSafeAreaInsets();
+  const { top, bottom } = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
   const [loading, setloading] = useState<boolean>(false);
   return (
@@ -20,7 +20,7 @@ const Welcome = () => {
       ]}
     >
       {/* Login Button and Image */}
-      <View>
+      <View style={{ flex: 1 }}>
         <TouchableOpacity
           style={styles.button}
           onPress={() => router.push("/(auth)/Login")}
@@ -32,7 +32,8 @@ const Welcome = () => {
         <View
           style={{
             flex: 1,
-            marginTop: verticalScale(100),
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <Animated.Image
@@ -50,6 +51,7 @@ const Welcome = () => {
           {
             backgroundColor: theme.background,
             shadowColor: isDark ? "white" : "black",
+            paddingBottom: bottom + verticalScale(12),
           },
         ]}
       >
@@ -61,11 +63,13 @@ const Welcome = () => {
             .damping(22)
             .stiffness(70)}
         >
-          <Text style={[styles.footerText1, { color: theme.text }]}>
-            Always take control
-          </Text>
-          <Text style={[styles.footerText1, { color: theme.text }]}>
-            of your habits
+          <Text
+            style={[
+              styles.footerText1,
+              { color: theme.text, letterSpacing: 1 },
+            ]}
+          >
+            Always take control of your habits
           </Text>
         </Animated.View>
         <Animated.View
@@ -119,7 +123,6 @@ export default Welcome;
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    justifyContent: "space-between",
   },
   button: {
     alignSelf: "flex-end",
@@ -127,7 +130,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontWeight: "500",
-    fontSize: verticalScale(20),
+    fontSize: verticalScale(19),
   },
   welcomeImage: {
     width: "100%",
@@ -136,10 +139,12 @@ const styles = StyleSheet.create({
   },
   footer: {
     alignItems: "center",
-    paddingTop: verticalScale(15),
-    paddingBottom: verticalScale(40),
+    paddingTop: verticalScale(12
+      
+      
+      ),
     elevation: 20,
-    gap: verticalScale(18),
+    gap: verticalScale(12),
     shadowOffset: { width: 0, height: -10 },
     shadowOpacity: 0.15,
     shadowRadius: 25,
@@ -150,10 +155,11 @@ const styles = StyleSheet.create({
   footerText1: {
     color: "white",
     fontWeight: "800",
-    fontSize: verticalScale(30),
+    fontSize: verticalScale(28),
+    textAlign: "center",
   },
   footerText2: {
-    fontSize: verticalScale(15),
+    fontSize: verticalScale(14),
     fontWeight: "400",
     textAlign: "center",
   },

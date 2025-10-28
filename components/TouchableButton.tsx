@@ -34,8 +34,7 @@ export default TouchableButton;
 const styles = StyleSheet.create({
   startedButton: {
     backgroundColor: colors.primary,
-    height: verticalScale(50),
-    width: "100%",
+    padding: verticalScale(12),
     borderRadius: verticalScale(17),
     justifyContent: "center",
     alignItems: "center",
