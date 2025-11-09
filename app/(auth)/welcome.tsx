@@ -51,7 +51,7 @@ const Welcome = () => {
           {
             backgroundColor: theme.background,
             shadowColor: isDark ? "white" : "black",
-            paddingBottom: bottom + verticalScale(12),
+            paddingBottom: bottom + verticalScale(15),
           },
         ]}
       >
@@ -139,10 +139,7 @@ const styles = StyleSheet.create({
   },
   footer: {
     alignItems: "center",
-    paddingTop: verticalScale(12
-      
-      
-      ),
+    paddingTop: verticalScale(12),
     elevation: 20,
     gap: verticalScale(12),
     shadowOffset: { width: 0, height: -10 },
@@ -162,5 +159,6 @@ const styles = StyleSheet.create({
     fontSize: verticalScale(14),
     fontWeight: "400",
     textAlign: "center",
+    paddingBottom: 10,
   },
 });

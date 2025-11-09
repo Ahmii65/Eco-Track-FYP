@@ -1,8 +1,8 @@
+import { AuthProvider } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
 import { Stack } from "expo-router";
 import { StatusBar, View } from "react-native";
-
-export default function RootLayout() {
+const StackLayout = () => {
   const { isDark, theme } = useTheme();
   return (
     <>
@@ -13,10 +13,15 @@ export default function RootLayout() {
       <View style={{ backgroundColor: theme.background, flex: 1 }}>
         <Stack
           screenOptions={{ headerShown: false, animation: "slide_from_right" }}
-        >
-          <Stack.Screen name="index" />
-        </Stack>
+        ></Stack>
       </View>
     </>
+  );
+};
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <StackLayout />
+    </AuthProvider>
   );
 }
