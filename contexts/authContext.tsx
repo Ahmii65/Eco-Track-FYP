@@ -50,9 +50,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return { success: true };
     } catch (error: any) {
       let msg = error.message;
-      if (msg === "Firebase: Error (auth/invalid-credential).") {
-        msg = "Incorrect email or password. Please try again.";
+      switch (msg) {
+        case "Firebase: Error (auth/invalid-credential).":
+          msg = "Incorrect email or password. Please try again.";
+          break;
+        case "Firebase: Error (auth/invalid-email).":
+          msg = "Invalid email address";
+          break;
+        default:
+          msg = "Failed to login. Please try again.";
+          break;
       }
+
       return { success: false, msg };
     }
   };
@@ -72,8 +81,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return { success: true };
     } catch (error: any) {
       let msg = error.message;
-      if (msg === "Firebase: Error (auth/email-already-in-use).") {
-        msg = "Email already in use. Please use a different email.";
+      switch (msg) {
+        case "Firebase: Error (auth/email-already-in-use).":
+          msg = "Email already in use";
+          break;
+        case "Firebase: Password should be at least 6 characters (auth/weak-password).":
+          msg = "Password should be at least 6 characters";
+          break;
+        case "Firebase: Error (auth/invalid-email).":
+          msg = "Invalid email address";
+          break;
+        default:
+          msg = "Failed to create account. Please try again.";
+          break;
       }
       return { success: false, msg };
     }

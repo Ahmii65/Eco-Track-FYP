@@ -8,7 +8,6 @@ const _layout = () => {
   const { theme } = useTheme();
   return (
     <>
-    
       <View style={{ flex: 1, backgroundColor: theme.background }}>
         <Stack
           screenOptions={{ headerShown: false, animation: "slide_from_right" }}
@@ -16,6 +15,10 @@ const _layout = () => {
           <Stack.Screen name="Login" />
           <Stack.Screen name="Register" />
           <Stack.Screen name="welcome" />
+          <Stack.Screen
+            name="ForgotPassword"
+            options={{ presentation: "modal", animation: "slide_from_bottom" }}
+          />
         </Stack>
       </View>
     </>

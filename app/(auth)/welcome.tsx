@@ -37,7 +37,7 @@ const Welcome = () => {
           }}
         >
           <Animated.Image
-            entering={FadeIn.duration(500)}
+            entering={FadeIn.duration(1000)}
             source={require("../../assets/images/welcome.png")}
             resizeMode="contain"
             style={styles.welcomeImage}
@@ -57,7 +57,8 @@ const Welcome = () => {
       >
         <Animated.View
           style={{ alignItems: "center" }}
-          entering={FadeInDown.duration(1000)
+          entering={FadeInDown.delay(100)
+            .duration(1000)
             .springify()
             .mass(1)
             .damping(22)
@@ -92,7 +93,7 @@ const Welcome = () => {
         </Animated.View>
         <Animated.View
           style={{ width: "100%" }}
-          entering={FadeInDown.delay(400)
+          entering={FadeInDown.delay(300)
             .springify()
             .mass(1)
             .damping(22)

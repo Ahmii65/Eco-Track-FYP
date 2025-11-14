@@ -9,6 +9,9 @@ import React, { useRef, useState } from "react";
 import {
   Alert,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -27,7 +30,7 @@ const Login = () => {
   const { login } = useAuth();
 
   const handleLogin = async () => {
-    if (!emailRef.current || !passwordRef.current) {
+    if (!emailRef.current?.trim() || !passwordRef.current?.trim()) {
       Alert.alert("SignIn", "Please fill all the fields");
       return;
     }
@@ -40,114 +43,134 @@ const Login = () => {
   };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View
-        style={[
-          styles.main,
-          { paddingTop: top + 5, backgroundColor: theme.background },
-        ]}
-      >
-        <BackButton />
-        <View style={{ marginTop: verticalScale(20), gap: 5 }}>
-          <Text style={[styles.text, { color: theme.text }]}>Hey,</Text>
-          <Text style={[styles.text, { color: theme.text }]}>Welcome Back</Text>
-        </View>
-        {/* Form */}
-        <View style={styles.form}>
-          <Text
-            style={{
-              color: theme.text,
-              fontSize: verticalScale(16),
-              fontWeight: "500",
-            }}
-          >
-            Login now to track all your Activities
-          </Text>
-          {/* Input */}
-          <View
-            style={[
-              styles.inputView,
-              { borderColor: isDark ? colors.neutral100 : "black" },
-            ]}
+      <View style={[styles.Container, { backgroundColor: theme.background }]}>
+        <KeyboardAvoidingView
+          style={{ flex: 1, backgroundColor: theme.background }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            style={{ backgroundColor: theme.background }}
           >
             <View
               style={{
-                justifyContent: "center",
-                paddingLeft: moderateScale(10),
+                paddingHorizontal: scale(20),
+                gap: verticalScale(20),
+                paddingTop: top + 5,
               }}
             >
-              <At size={verticalScale(24)} color={theme.text} />
-            </View>
-            <TextInput
-              placeholder="Enter your Email"
-              placeholderTextColor={theme.text}
-              keyboardType="email-address"
-              style={[styles.inputStyles, { color: theme.text }]}
-              onChangeText={(value) => (emailRef.current = value)}
-            />
-          </View>
-          {/* Input 2 */}
-          <View
-            style={[
-              styles.inputView,
-              { borderColor: isDark ? colors.neutral100 : "black" },
-            ]}
-          >
-            <View
-              style={{
-                justifyContent: "center",
-                paddingLeft: moderateScale(10),
-              }}
-            >
-              <Lock size={verticalScale(24)} color={theme.text} />
-            </View>
-            <TextInput
-              placeholder="Enter your Password"
-              placeholderTextColor={theme.text}
-              style={[styles.inputStyles, { color: theme.text }]}
-              secureTextEntry
-              onChangeText={(value) => (passwordRef.current = value)}
-            />
-          </View>
-        </View>
+              <BackButton />
+              <View style={{ marginTop: verticalScale(20), gap: 5 }}>
+                <Text style={[styles.text, { color: theme.text }]}>Hey,</Text>
+                <Text style={[styles.text, { color: theme.text }]}>
+                  Welcome Back
+                </Text>
+                <Text
+                  style={{
+                    color: theme.text,
+                    fontSize: verticalScale(16),
+                    fontWeight: "500",
+                    paddingTop: verticalScale(5),
+                  }}
+                >
+                  Login now to track all your Activities
+                </Text>
+              </View>
+              {/* Form */}
+              <View style={styles.form}>
+                {/* Input */}
+                <View
+                  style={[
+                    styles.inputView,
+                    { borderColor: isDark ? colors.neutral100 : "black" },
+                  ]}
+                >
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      paddingLeft: moderateScale(10),
+                    }}
+                  >
+                    <At size={verticalScale(24)} color={theme.text} />
+                  </View>
+                  <TextInput
+                    placeholder="Enter your Email"
+                    placeholderTextColor={theme.text}
+                    keyboardType="email-address"
+                    style={[styles.inputStyles, { color: theme.text }]}
+                    onChangeText={(value) => (emailRef.current = value)}
+                  />
+                </View>
+                {/* Input 2 */}
+                <View
+                  style={[
+                    styles.inputView,
+                    { borderColor: isDark ? colors.neutral100 : "black" },
+                  ]}
+                >
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      paddingLeft: moderateScale(10),
+                    }}
+                  >
+                    <Lock size={verticalScale(24)} color={theme.text} />
+                  </View>
+                  <TextInput
+                    placeholder="Enter your Password"
+                    placeholderTextColor={theme.text}
+                    style={[styles.inputStyles, { color: theme.text }]}
+                    secureTextEntry
+                    onChangeText={(value) => (passwordRef.current = value)}
+                  />
+                </View>
+              </View>
 
-        <Text
-          style={{
-            color: theme.text,
-            alignSelf: "flex-end",
-            paddingRight: 10,
-            fontSize: verticalScale(13),
-            fontWeight: 500,
-          }}
-        >
-          Forgot Password?
-        </Text>
-        <TouchableButton loading={loading} onPress={handleLogin}>
-          <Text
-            style={{
-              fontWeight: "700",
-              fontSize: 20,
-              color: colors.neutral900,
-            }}
-          >
-            Login
-          </Text>
-        </TouchableButton>
-        <Text
-          style={{
-            color: theme.text,
-            alignSelf: "center",
-            fontSize: verticalScale(13),
-            fontWeight: 500,
-          }}
-        >
-          Dont have an Account?{" "}
-          <Text
-            style={{ fontWeight: 500, color: colors.primary }}
-            onPress={() => router.replace("/(auth)/Register")}
-          >
-            SignUp
-          </Text>
-        </Text>
+              <Text
+                style={{
+                  color: theme.text,
+                  alignSelf: "flex-end",
+                  paddingRight: 10,
+                  fontSize: verticalScale(13),
+                  fontWeight: 500,
+                }}
+                onPress={() => router.push("/(auth)/ForgotPassword")}
+              >
+                Forgot Password?
+              </Text>
+              <TouchableButton loading={loading} onPress={handleLogin}>
+                <Text
+                  style={{
+                    fontWeight: "700",
+                    fontSize: 20,
+                    color: colors.neutral900,
+                  }}
+                >
+                  Login
+                </Text>
+              </TouchableButton>
+              <Text
+                style={{
+                  color: theme.text,
+                  alignSelf: "center",
+                  fontSize: verticalScale(13),
+                  fontWeight: 500,
+                }}
+              >
+                Dont have an Account?{" "}
+                <Text
+                  style={{ fontWeight: 500, color: colors.primary }}
+                  onPress={() => router.replace("/(auth)/Register")}
+                >
+                  SignUp
+                </Text>
+              </Text>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -156,10 +179,12 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
-  main: {
+  Container: {
     flex: 1,
-    paddingHorizontal: scale(20),
-    gap: verticalScale(20),
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: verticalScale(30),
   },
   text: {
     fontSize: verticalScale(28),

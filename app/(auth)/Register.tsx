@@ -31,7 +31,11 @@ const Register = () => {
   const { register } = useAuth();
 
   const handleSignUp = async () => {
-    if (!emailRef.current || !passwordRef.current || !nameRef.current) {
+    if (
+      !emailRef.current?.trim() ||
+      !passwordRef.current?.trim() ||
+      !nameRef.current?.trim()
+    ) {
       Alert.alert("SignUp", "Please fill all the fields");
       return;
     }
@@ -44,13 +48,14 @@ const Register = () => {
     setLoading(false);
     if (!response.success) {
       Alert.alert("Registration Error", response?.msg);
+      console.log(response?.msg);
     }
   };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <KeyboardAvoidingView
-        style={[{ flex: 1 }, { backgroundColor: theme.background }]}
+        style={{ flex: 1, backgroundColor: theme.background }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
       >
@@ -68,18 +73,19 @@ const Register = () => {
                 <Text style={[styles.text, { color: theme.text }]}>
                   Get Started
                 </Text>
-              </View>
-              {/* Form */}
-              <View style={styles.form}>
                 <Text
                   style={{
                     color: theme.text,
                     fontSize: verticalScale(16),
                     fontWeight: "500",
+                    paddingTop: verticalScale(5),
                   }}
                 >
                   Create your account to track all your Activities
                 </Text>
+              </View>
+              {/* Form */}
+              <View style={styles.form}>
                 <View
                   style={[
                     styles.inputView,
