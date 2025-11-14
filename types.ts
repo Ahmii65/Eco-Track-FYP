@@ -119,8 +119,6 @@ export type UserDataType = {
 export type AuthContextType = {
   user: UserType;
   setUser: Function;
-  initializing: boolean;
-  setInitializing: Function;
   login: (
     email: string,
     password: string

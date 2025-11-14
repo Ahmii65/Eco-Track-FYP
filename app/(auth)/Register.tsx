@@ -39,12 +39,14 @@ const Register = () => {
       Alert.alert("SignUp", "Please fill all the fields");
       return;
     }
+    Keyboard.dismiss();
     setLoading(true);
     let response = await register(
       emailRef.current,
       passwordRef.current,
       nameRef.current
     );
+
     setLoading(false);
     if (!response.success) {
       Alert.alert("Registration Error", response?.msg);

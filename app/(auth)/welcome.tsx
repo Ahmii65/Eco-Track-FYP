@@ -4,7 +4,7 @@ import useTheme from "@/hooks/useColorScheme";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale } from "react-native-size-matters";
 
@@ -37,7 +37,7 @@ const Welcome = () => {
           }}
         >
           <Animated.Image
-            entering={FadeIn.duration(1000)}
+            entering={FadeInDown.duration(500)}
             source={require("../../assets/images/welcome.png")}
             resizeMode="contain"
             style={styles.welcomeImage}
@@ -57,7 +57,7 @@ const Welcome = () => {
       >
         <Animated.View
           style={{ alignItems: "center" }}
-          entering={FadeInDown.delay(100)
+          entering={FadeInDown.delay(200)
             .duration(1000)
             .springify()
             .mass(1)
@@ -75,7 +75,7 @@ const Welcome = () => {
         </Animated.View>
         <Animated.View
           style={{ alignItems: "center", gap: 2 }}
-          entering={FadeInDown.delay(200)
+          entering={FadeInDown.delay(300)
             .springify()
             .mass(1)
             .damping(22)
@@ -93,7 +93,7 @@ const Welcome = () => {
         </Animated.View>
         <Animated.View
           style={{ width: "100%" }}
-          entering={FadeInDown.delay(300)
+          entering={FadeInDown.delay(400)
             .springify()
             .mass(1)
             .damping(22)

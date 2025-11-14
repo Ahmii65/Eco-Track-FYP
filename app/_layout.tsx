@@ -1,14 +1,21 @@
-import { colors } from "@/constants/theme";
 import { AuthProvider } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
 import * as NavigationBar from "expo-navigation-bar";
 import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { Platform, View } from "react-native";
+
+// Prevent the default splash screen from auto-hiding
+SplashScreen.preventAutoHideAsync();
 const StackLayout = () => {
   const { isDark, theme } = useTheme();
+  
   useEffect(() => {
+    // Hide the default splash screen immediately to show custom splash
+    SplashScreen.hideAsync();
+    
     // StatusBar style handled by expo-status-bar component below,
     // but for nav bar we must set it explicitly on Android.
     async function applySystemBars() {

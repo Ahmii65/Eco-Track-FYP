@@ -6,7 +6,15 @@ import useTheme from "@/hooks/useColorScheme";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { At } from "phosphor-react-native";
 import React, { useRef, useState } from "react";
-import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  Keyboard,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
 const ForgotPassword = () => {
@@ -44,56 +52,62 @@ const ForgotPassword = () => {
   };
 
   return (
-    <View
-      style={[
-        styles.main,
-        {
-          backgroundColor: theme.background,
-          paddingTop: top + 5,
-        },
-      ]}
-    >
-      <BackButton />
-
-      <Text
-        style={{
-          color: theme.text,
-          fontWeight: "800",
-          fontSize: verticalScale(24),
-        }}
-      >
-        Did you forget your password?
-      </Text>
+    <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
       <View
         style={[
-          styles.inputView,
-          { borderColor: isDark ? colors.neutral100 : "black" },
+          styles.main,
+          {
+            backgroundColor: theme.background,
+            paddingTop: top + 5,
+          },
         ]}
       >
-        <View
+        <BackButton />
+
+        <Text
           style={{
-            justifyContent: "center",
-            paddingLeft: moderateScale(10),
+            color: theme.text,
+            fontWeight: "800",
+            fontSize: verticalScale(24),
           }}
         >
-          <At size={verticalScale(24)} color={theme.text} />
-        </View>
-        <TextInput
-          placeholder="Enter your Email"
-          placeholderTextColor={theme.text}
-          keyboardType="email-address"
-          style={[styles.inputStyles, { color: theme.text }]}
-          onChangeText={(value) => (emailRef.current = value)}
-        />
-      </View>
-      <TouchableButton loading={loading} onPress={handleReset}>
-        <Text
-          style={{ fontWeight: "700", fontSize: 20, color: colors.neutral900 }}
-        >
-          Send Link
+          Did you forget your password?
         </Text>
-      </TouchableButton>
-    </View>
+        <View
+          style={[
+            styles.inputView,
+            { borderColor: isDark ? colors.neutral100 : "black" },
+          ]}
+        >
+          <View
+            style={{
+              justifyContent: "center",
+              paddingLeft: moderateScale(10),
+            }}
+          >
+            <At size={verticalScale(24)} color={theme.text} />
+          </View>
+          <TextInput
+            placeholder="Enter your Email"
+            placeholderTextColor={theme.text}
+            keyboardType="email-address"
+            style={[styles.inputStyles, { color: theme.text }]}
+            onChangeText={(value) => (emailRef.current = value)}
+          />
+        </View>
+        <TouchableButton loading={loading} onPress={handleReset}>
+          <Text
+            style={{
+              fontWeight: "700",
+              fontSize: 20,
+              color: colors.neutral900,
+            }}
+          >
+            Send Link
+          </Text>
+        </TouchableButton>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

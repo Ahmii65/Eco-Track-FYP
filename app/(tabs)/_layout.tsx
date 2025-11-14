@@ -11,7 +11,7 @@ import {
 } from "phosphor-react-native";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { moderateScale } from "react-native-size-matters";
+import { moderateScale, scale } from "react-native-size-matters";
 const _layout = () => {
   const { bottom } = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
@@ -36,7 +36,7 @@ const _layout = () => {
             title: "Home",
             tabBarIcon: ({ size, color, focused }) => (
               <House
-                size={35}
+                size={scale(30)}
                 color={focused ? colors.primary : "gray"}
                 weight="fill"
               />
@@ -49,7 +49,7 @@ const _layout = () => {
             title: "Expenses",
             tabBarIcon: ({ size, color, focused }) => (
               <CurrencyDollar
-                size={35}
+                size={scale(30)}
                 color={focused ? colors.primary : "gray"}
                 weight="fill"
               />
@@ -62,7 +62,7 @@ const _layout = () => {
             title: "Statistics",
             tabBarIcon: ({ size, color, focused }) => (
               <ChartBar
-                size={35}
+                size={scale(30)}
                 color={focused ? colors.primary : "gray"}
                 weight="fill"
               />
@@ -75,7 +75,7 @@ const _layout = () => {
             title: "Wallet",
             tabBarIcon: ({ size, color, focused }) => (
               <Wallet
-                size={35}
+                size={scale(30)}
                 color={focused ? colors.primary : "gray"}
                 weight="fill"
               />
@@ -88,7 +88,7 @@ const _layout = () => {
             title: "Profile",
             tabBarIcon: ({ size, color, focused }) => (
               <UserCircle
-                size={35}
+                size={scale(30)}
                 color={focused ? colors.primary : "gray"}
                 weight="fill"
               />

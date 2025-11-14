@@ -125,8 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     login,
     register,
     updateUserData,
-    initializing,
-    setInitializing,
+
   };
 
   return (

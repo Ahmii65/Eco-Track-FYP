@@ -34,9 +34,11 @@ const Login = () => {
       Alert.alert("SignIn", "Please fill all the fields");
       return;
     }
+    Keyboard.dismiss();
     setLoading(true);
     let response = await login(emailRef.current, passwordRef.current);
     setLoading(false);
+
     if (!response.success) {
       Alert.alert("Login Error", response?.msg);
     }
