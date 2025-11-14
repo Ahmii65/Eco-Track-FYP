@@ -21,19 +21,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const unsub = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         setUser({
-          uid: firebaseUser?.uid,
-          email: firebaseUser?.email,
-          name: firebaseUser?.displayName,
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName,
         });
+
         if (initializing) {
+          updateUserData(firebaseUser.uid);
           router.replace("/(tabs)");
         }
       } else {
         setUser(null);
+
         if (initializing) {
           router.replace("/(auth)/welcome");
         }
       }
+
       if (initializing) setInitializing(false);
     });
 
@@ -46,6 +50,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return { success: true };
     } catch (error: any) {
       let msg = error.message;
+      if (msg === "Firebase: Error (auth/invalid-credential).") {
+        msg = "Incorrect email or password. Please try again.";
+      }
       return { success: false, msg };
     }
   };
@@ -57,7 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         email,
         password
       );
-      await setDoc(doc(fireStore, "Users", response?.user?.uid), {
+      await setDoc(doc(fireStore, "users", response?.user?.uid), {
         name,
         email,
         uid: response?.user?.uid,
@@ -65,13 +72,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       return { success: true };
     } catch (error: any) {
       let msg = error.message;
+      if (msg === "Firebase: Error (auth/email-already-in-use).") {
+        msg = "Email already in use. Please use a different email.";
+      }
       return { success: false, msg };
     }
   };
 
   const updateUserData = async (uid: string) => {
     try {
-      const docRef = doc(fireStore, "Users", uid);
+      const docRef = doc(fireStore, "users", uid);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
@@ -95,6 +105,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     login,
     register,
     updateUserData,
+    initializing,
+    setInitializing,
   };
 
   return (

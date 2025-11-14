@@ -1,15 +1,9 @@
-import { Href } from "expo-router";
-import { Firestore, Timestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { Icon } from "phosphor-react-native";
 import React, { ReactNode } from "react";
 import {
-  ActivityIndicator,
-  ActivityIndicatorProps,
-  ImageStyle,
-  PressableProps,
   TextInput,
   TextInputProps,
-  TextProps,
   TextStyle,
   TouchableOpacityProps,
   ViewStyle,
@@ -26,7 +20,6 @@ export type accountOptionType = {
   bgColor: string;
   routeName?: any;
 };
-
 
 export type IconComponent = React.ComponentType<{
   height?: number;
@@ -126,6 +119,8 @@ export type UserDataType = {
 export type AuthContextType = {
   user: UserType;
   setUser: Function;
+  initializing: boolean;
+  setInitializing: Function;
   login: (
     email: string,
     password: string

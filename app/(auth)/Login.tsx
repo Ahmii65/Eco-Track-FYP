@@ -1,6 +1,7 @@
 import BackButton from "@/components/BackButton";
 import TouchableButton from "@/components/TouchableButton";
 import { colors } from "@/constants/theme";
+import { useAuth } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
 import { router } from "expo-router";
 import { At, Lock } from "phosphor-react-native";
@@ -23,11 +24,18 @@ const Login = () => {
   const emailRef = useRef<string>(null);
   const passwordRef = useRef<string>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const { login } = useAuth();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!emailRef.current || !passwordRef.current) {
       Alert.alert("SignIn", "Please fill all the fields");
       return;
+    }
+    setLoading(true);
+    let response = await login(emailRef.current, passwordRef.current);
+    setLoading(false);
+    if (!response.success) {
+      Alert.alert("Login Error", response?.msg);
     }
   };
   return (
@@ -135,7 +143,7 @@ const Login = () => {
           Dont have an Account?{" "}
           <Text
             style={{ fontWeight: 500, color: colors.primary }}
-            onPress={() => router.navigate("/(auth)/Register")}
+            onPress={() => router.replace("/(auth)/Register")}
           >
             SignUp
           </Text>
