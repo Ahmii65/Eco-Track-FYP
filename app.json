@@ -23,9 +23,16 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow EcoTrack to access your photos"
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
+
         {
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,

@@ -11,11 +11,11 @@ import { Platform, View } from "react-native";
 SplashScreen.preventAutoHideAsync();
 const StackLayout = () => {
   const { isDark, theme } = useTheme();
-  
+
   useEffect(() => {
     // Hide the default splash screen immediately to show custom splash
     SplashScreen.hideAsync();
-    
+
     // StatusBar style handled by expo-status-bar component below,
     // but for nav bar we must set it explicitly on Android.
     async function applySystemBars() {
@@ -44,7 +44,12 @@ const StackLayout = () => {
       <View style={{ backgroundColor: theme.background, flex: 1 }}>
         <Stack
           screenOptions={{ headerShown: false, animation: "slide_from_right" }}
-        />
+        >
+          <Stack.Screen name="EditProfile" />
+          <Stack.Screen name="PrivacyPolicy" />
+          <Stack.Screen name="TermsAndConditions" />
+          <Stack.Screen name="AboutApp" />
+        </Stack>
       </View>
     </>
   );

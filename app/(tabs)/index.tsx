@@ -1,11 +1,9 @@
-import { useAuth } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale } from "react-native-size-matters";
 const Home = () => {
-  const { user } = useAuth();
   const { theme } = useTheme();
   const { top } = useSafeAreaInsets();
   return (

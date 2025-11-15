@@ -1,3 +1,4 @@
+import AnimatedTabIcons from "@/components/AnimatedTabIcons";
 import { colors } from "@/constants/theme";
 import useTheme from "@/hooks/useColorScheme";
 import { Tabs } from "expo-router";
@@ -10,11 +11,9 @@ import {
   Wallet,
 } from "phosphor-react-native";
 import React from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { moderateScale, scale } from "react-native-size-matters";
+import { moderateScale } from "react-native-size-matters";
 const _layout = () => {
-  const { bottom } = useSafeAreaInsets();
-  const { isDark, theme } = useTheme();
+  const { isDark } = useTheme();
   return (
     <>
       <StatusBar style="auto" animated />
@@ -23,10 +22,11 @@ const _layout = () => {
           headerShown: false,
           tabBarShowLabel: false,
           tabBarStyle: {
-            paddingTop: moderateScale(10),
-            paddingBottom: bottom + moderateScale(45),
+            paddingTop: moderateScale(8),
             backgroundColor: isDark ? colors.neutral800 : colors.white,
-            borderTopColor: isDark ? colors.neutral800 : colors.white,
+            borderTopWidth: 0,
+            elevation: 0,
+            shadowOpacity: 0,
           },
         }}
       >
@@ -34,11 +34,13 @@ const _layout = () => {
           name="index"
           options={{
             title: "Home",
-            tabBarIcon: ({ size, color, focused }) => (
-              <House
-                size={scale(30)}
+            tabBarIcon: ({ size, focused }) => (
+              <AnimatedTabIcons
+                size={size}
                 color={focused ? colors.primary : "gray"}
-                weight="fill"
+                focused={focused}
+                Icon={House}
+                weight={focused ? "fill" : "regular"}
               />
             ),
           }}
@@ -48,10 +50,12 @@ const _layout = () => {
           options={{
             title: "Expenses",
             tabBarIcon: ({ size, color, focused }) => (
-              <CurrencyDollar
-                size={scale(30)}
+              <AnimatedTabIcons
+                size={size}
                 color={focused ? colors.primary : "gray"}
-                weight="fill"
+                focused={focused}
+                Icon={CurrencyDollar}
+                weight={focused ? "fill" : "regular"}
               />
             ),
           }}
@@ -61,10 +65,12 @@ const _layout = () => {
           options={{
             title: "Statistics",
             tabBarIcon: ({ size, color, focused }) => (
-              <ChartBar
-                size={scale(30)}
+              <AnimatedTabIcons
+                size={size}
                 color={focused ? colors.primary : "gray"}
-                weight="fill"
+                focused={focused}
+                Icon={ChartBar}
+                weight={focused ? "fill" : "regular"}
               />
             ),
           }}
@@ -74,10 +80,12 @@ const _layout = () => {
           options={{
             title: "Wallet",
             tabBarIcon: ({ size, color, focused }) => (
-              <Wallet
-                size={scale(30)}
+              <AnimatedTabIcons
+                size={size}
                 color={focused ? colors.primary : "gray"}
-                weight="fill"
+                focused={focused}
+                Icon={Wallet}
+                weight={focused ? "fill" : "regular"}
               />
             ),
           }}
@@ -87,10 +95,12 @@ const _layout = () => {
           options={{
             title: "Profile",
             tabBarIcon: ({ size, color, focused }) => (
-              <UserCircle
-                size={scale(30)}
+              <AnimatedTabIcons
+                size={size}
                 color={focused ? colors.primary : "gray"}
-                weight="fill"
+                focused={focused}
+                Icon={UserCircle}
+                weight={focused ? "fill" : "regular"}
               />
             ),
           }}

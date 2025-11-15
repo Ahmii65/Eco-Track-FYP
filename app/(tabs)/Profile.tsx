@@ -5,9 +5,17 @@ import { useAuth } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
 import { getProfileImage } from "@/services/imageServices";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import { signOut } from "firebase/auth";
-import { CaretRight, Gear, Shield, SignOut, User } from "phosphor-react-native";
-import React from "react";
+import {
+  CaretRight,
+  FileText,
+  Info,
+  Shield,
+  SignOut,
+  User,
+} from "phosphor-react-native";
+import React, { useState } from "react";
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale } from "react-native-size-matters";
@@ -16,6 +24,7 @@ const Profile = () => {
   const { theme, isDark } = useTheme();
   const { top } = useSafeAreaInsets();
   const { user } = useAuth();
+  const [loading, setloading] = useState<boolean>(false);
 
   const handleSignOut = () => {
     Alert.alert(
@@ -30,7 +39,9 @@ const Profile = () => {
           text: "Confirm",
           style: "destructive",
           onPress: async () => {
+            setloading(true);
             await signOut(auth);
+            setloading(false);
           },
         },
       ],
@@ -39,9 +50,36 @@ const Profile = () => {
   };
 
   const menuItems = [
-    { label: "Edit Profile", icon: User, onPress: () => {} },
-    { label: "Settings", icon: Gear, onPress: () => {} },
-    { label: "Privacy Policy", icon: Shield, onPress: () => {} },
+    {
+      label: "Edit Profile",
+      icon: User,
+      onPress: () => {
+        {
+          router.push("/EditProfile");
+        }
+      },
+    },
+    {
+      label: "Privacy Policy",
+      icon: Shield,
+      onPress: () => {
+        router.push("/PrivacyPolicy");
+      },
+    },
+    {
+      label: "Terms and Conditions",
+      icon: FileText,
+      onPress: () => {
+        router.push("/TermsAndConditions");
+      },
+    },
+    {
+      label: "About App",
+      icon: Info,
+      onPress: () => {
+        router.push("/AboutApp");
+      },
+    },
   ];
 
   return (
@@ -87,7 +125,7 @@ const Profile = () => {
         <Text style={[styles.text, { color: theme.text }]}>
           {user?.name || "Username"}
         </Text>
-        <Text style={[styles.text1, { color: theme.text }]}>{user?.email}</Text>
+        {/* <Text style={[styles.text1, { color: theme.text }]}>{user?.email}</Text> */}
       </View>
 
       {/* Menu Section */}
@@ -144,7 +182,7 @@ const Profile = () => {
 
       {/* Logout Button */}
       <View style={styles.logoutSection}>
-        <TouchableButton loading={false} onPress={handleSignOut}>
+        <TouchableButton loading={loading} onPress={handleSignOut}>
           <View style={styles.logoutButtonContent}>
             <SignOut size={scale(16)} color={colors.neutral900} weight="bold" />
             <Text style={styles.logoutButtonText}>Sign Out</Text>
@@ -176,7 +214,7 @@ const styles = StyleSheet.create({
     borderRadius: scale(53),
   },
   text: {
-    fontSize: verticalScale(18),
+    fontSize: verticalScale(22),
     fontWeight: 700,
     alignSelf: "center",
     letterSpacing: verticalScale(0.3),

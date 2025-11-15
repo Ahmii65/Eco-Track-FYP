@@ -115,7 +115,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     } catch (error: any) {
       let msg = error.message;
-      console.log("Error updating user data: ", msg);
     }
   };
 

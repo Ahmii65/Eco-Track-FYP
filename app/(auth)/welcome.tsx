@@ -2,7 +2,7 @@ import TouchableButton from "@/components/TouchableButton";
 import { colors } from "@/constants/theme";
 import useTheme from "@/hooks/useColorScheme";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -11,7 +11,6 @@ import { scale, verticalScale } from "react-native-size-matters";
 const Welcome = () => {
   const { top, bottom } = useSafeAreaInsets();
   const { isDark, theme } = useTheme();
-  const [loading, setloading] = useState<boolean>(false);
   return (
     <View
       style={[
@@ -100,7 +99,7 @@ const Welcome = () => {
             .stiffness(70)}
         >
           <TouchableButton
-            loading={loading}
+            loading={false}
             onPress={() => router.push("/(auth)/Register")}
           >
             <Text
