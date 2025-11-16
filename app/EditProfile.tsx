@@ -4,14 +4,14 @@ import { fireStore } from "@/config/firebase";
 import { colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
-import { getProfileImage } from "@/services/imageServices";
+import { getProfileImage, uploadToCloudinary } from "@/services/imageServices";
 import { UserDataType } from "@/types";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { doc, setDoc } from "firebase/firestore";
 import { At, PencilSimple, User } from "phosphor-react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Alert,
   Keyboard,
@@ -35,11 +35,18 @@ const EditProfile = () => {
   const nameRef = useRef<string>(user?.name || "");
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState<UserDataType>({
-    name: "",
     image: null,
   });
 
   const handleSave = async () => {
+    const nameUnchanged = nameRef.current.trim() === user?.name;
+    const imageUnchanged = !userData?.image?.uri; // no new image picked
+
+    if (nameUnchanged && imageUnchanged) {
+      Alert.alert("Edit Profile", "Nothing to Update");
+      setLoading(false);
+      return;
+    }
     if (!nameRef.current?.trim()) {
       Alert.alert("Error", "Please enter your name");
       return;
@@ -49,27 +56,44 @@ const EditProfile = () => {
     setLoading(true);
 
     try {
-      // TODO: Add image upload logic here
-      // For now, just update the name
+      // ALWAYS define first, so it is NEVER undefined
+      let uploadedImageURL = user?.image || null;
+
+      // If user picked a new image
+      if (userData?.image?.uri) {
+        const updateData = await uploadToCloudinary(userData.image, "users");
+
+        if (!updateData?.success) {
+          Alert.alert("Error", updateData.msg || "Failed to upload image");
+          return;
+        }
+
+        uploadedImageURL = updateData.data; // new URL
+        setUserData({ image: uploadedImageURL });
+      }
+
+      // Update Firestore
       if (user?.uid) {
-        // Update in Firestore
         await setDoc(
           doc(fireStore, "users", user.uid),
           {
-            ...user,
             name: nameRef.current.trim(),
+            image: uploadedImageURL, // ALWAYS correct
           },
           { merge: true }
         );
 
-        // Update local state
-        setUser({ ...user, name: nameRef.current.trim() });
-        // await updateUserData(user.uid);
+        // Update local auth state
+        setUser({
+          ...user,
+          name: nameRef.current.trim(),
+          image: uploadedImageURL,
+        });
+
         Alert.alert("Success", "Profile updated successfully");
       }
     } catch (error: any) {
-      Alert.alert("Error", error?.message);
-      // console.log("Error updating profile:", error);
+      Alert.alert("Error", error.message);
     } finally {
       setLoading(false);
       router.back();
@@ -84,10 +108,8 @@ const EditProfile = () => {
       quality: 0.5,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
-      setUserData({ ...userData, image: result.assets[0] });
+      setUserData({ image: result.assets[0] });
     }
   };
 
@@ -141,8 +163,9 @@ const EditProfile = () => {
                 ]}
               >
                 <Image
-                  source={getProfileImage(userData?.image)}
+                  source={getProfileImage(userData?.image || user?.image)}
                   contentFit="cover"
+                  // cachePolicy={"none"}
                   transition={100}
                   style={styles.profileImage}
                 />

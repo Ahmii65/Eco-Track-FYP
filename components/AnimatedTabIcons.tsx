@@ -30,7 +30,7 @@ const AnimatedTabIcons = ({
   const scale = useSharedValue(1);
   const opacity = useSharedValue(1);
   useEffect(() => {
-    scale.value = withSpring(focused ? 1.3 : 1, {
+    scale.value = withSpring(focused ? 1.2 : 1, {
       damping: 10,
       stiffness: 200,
       mass: 0.5,

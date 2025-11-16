@@ -44,12 +44,7 @@ const StackLayout = () => {
       <View style={{ backgroundColor: theme.background, flex: 1 }}>
         <Stack
           screenOptions={{ headerShown: false, animation: "slide_from_right" }}
-        >
-          <Stack.Screen name="EditProfile" />
-          <Stack.Screen name="PrivacyPolicy" />
-          <Stack.Screen name="TermsAndConditions" />
-          <Stack.Screen name="AboutApp" />
-        </Stack>
+        />
       </View>
     </>
   );

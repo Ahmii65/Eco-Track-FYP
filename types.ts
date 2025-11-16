@@ -112,7 +112,6 @@ export type UserType = {
 } | null;
 
 export type UserDataType = {
-  name: string;
   image?: any;
 };
 

@@ -127,9 +127,7 @@ Address: Eco Track Support Team`,
             style={[
               styles.iconContainer,
               {
-                backgroundColor: isDark
-                  ? colors.neutral800
-                  : colors.neutral100,
+                backgroundColor: isDark ? colors.neutral800 : colors.neutral100,
               },
             ]}
           >
@@ -147,10 +145,10 @@ Address: Eco Track Support Team`,
             })}
           </Text>
           <Text style={[styles.introDescription, { color: theme.text }]}>
-            Please read these Terms and Conditions carefully before using the Eco
-            Track mobile application. By using our app, you agree to be bound by
-            these terms. If you do not agree to these terms, please do not use
-            our service.
+            Please read these Terms and Conditions carefully before using the
+            Eco Track mobile application. By using our app, you agree to be
+            bound by these terms. If you do not agree to these terms, please do
+            not use our service.
           </Text>
         </View>
 
@@ -191,7 +189,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: verticalScale(25),
+    marginBottom: verticalScale(10),
   },
   headerText: {
     fontSize: verticalScale(18),
