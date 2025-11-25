@@ -35,7 +35,7 @@ const AnimatedTabIcons = ({
       stiffness: 200,
       mass: 0.5,
     });
-    opacity.value = withTiming(focused ? 1 : 0.7, { duration: 200 });
+    opacity.value = withTiming(focused ? 1 : 0.9, { duration: 200 });
   }, [focused]);
 
   const animatedStyles = useAnimatedStyle(() => ({

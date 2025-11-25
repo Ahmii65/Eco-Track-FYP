@@ -15,9 +15,6 @@ import React, { useRef, useState } from "react";
 import {
   Alert,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -104,6 +101,7 @@ const EditProfile = () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
+      allowsEditing: true,
       aspect: [4, 3],
       quality: 0.5,
     });
@@ -124,18 +122,8 @@ const EditProfile = () => {
           },
         ]}
       >
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-        >
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingBottom: bottom,
-            }}
-            keyboardShouldPersistTaps="handled"
-          >
+        <View style={{ flex: 1 }}>
+          <View style={styles.content}>
             {/* Header */}
             <View style={styles.header}>
               <BackButton />
@@ -165,7 +153,6 @@ const EditProfile = () => {
                 <Image
                   source={getProfileImage(userData?.image || user?.image)}
                   contentFit="cover"
-                  // cachePolicy={"none"}
                   transition={100}
                   style={styles.profileImage}
                 />
@@ -248,15 +235,21 @@ const EditProfile = () => {
                 />
               </View>
             </View>
-
-            {/* Save Button */}
-            <View style={styles.buttonSection}>
-              <TouchableButton loading={loading} onPress={handleSave}>
-                <Text style={styles.saveButtonText}>Save Changes</Text>
-              </TouchableButton>
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
+          </View>
+        </View>
+        <View
+          style={{
+            borderTopWidth: 1,
+            borderTopColor: isDark ? colors.neutral700 : colors.neutral200,
+            paddingHorizontal: scale(18),
+            paddingTop: verticalScale(10),
+            paddingBottom: bottom + verticalScale(12),
+          }}
+        >
+          <TouchableButton loading={loading} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>Save Changes</Text>
+          </TouchableButton>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -267,7 +260,11 @@ export default EditProfile;
 const styles = StyleSheet.create({
   main: {
     flex: 1,
+  },
+  content: {
+    flex: 1,
     paddingHorizontal: scale(20),
+    paddingBottom: verticalScale(20),
   },
   header: {
     flexDirection: "row",
@@ -333,9 +330,6 @@ const styles = StyleSheet.create({
     paddingLeft: moderateScale(10),
     justifyContent: "center",
     flex: 1,
-  },
-  buttonSection: {
-    // marginTop: verticalScale(0),
   },
   saveButtonText: {
     fontSize: verticalScale(16),
