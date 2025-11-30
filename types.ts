@@ -74,7 +74,7 @@ export type TransactionListType = {
 };
 
 export type TransactionItemProps = {
-  item: TransactionType;
+  item: any;
   index: number;
   handleClick: Function;
 };

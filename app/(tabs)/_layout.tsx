@@ -11,11 +11,12 @@ import {
   Wallet,
 } from "phosphor-react-native";
 import React from "react";
+import { View } from "react-native";
 import { moderateScale } from "react-native-size-matters";
 const _layout = () => {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
       <StatusBar style="auto" animated />
       <Tabs
         screenOptions={{
@@ -106,7 +107,7 @@ const _layout = () => {
           }}
         />
       </Tabs>
-    </>
+    </View>
   );
 };
 

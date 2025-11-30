@@ -78,11 +78,12 @@ const AddWallet = () => {
           try {
             setDeleteLoading(true);
             await deleteWallet(oldWallet?.id);
-            router.back();
+            // router.back();
           } catch (err) {
             Alert.alert("Wallet", "Failed to delete wallet");
           } finally {
             setDeleteLoading(false);
+            Alert.alert("Wallet", "Wallet and associated transactions deleted");
           }
         },
       },
@@ -114,15 +115,7 @@ const AddWallet = () => {
             </Text>
           </View>
         </View>
-        <Text
-          style={{
-            color: theme.text,
-            fontWeight: 500,
-            fontSize: verticalScale(18),
-          }}
-        >
-          Wallet Name
-        </Text>
+        <Text style={[styles.date, { color: theme.text }]}>Wallet Name</Text>
         <TextInput
           placeholder="Enter Name"
           placeholderTextColor={theme.text}
@@ -138,15 +131,7 @@ const AddWallet = () => {
             color: theme.text,
           }}
         />
-        <Text
-          style={{
-            color: theme.text,
-            fontWeight: 500,
-            fontSize: verticalScale(18),
-          }}
-        >
-          Wallet Icon
-        </Text>
+        <Text style={[styles.date, { color: theme.text }]}>Wallet Icon</Text>
         <ImageIcon
           placeholder="Upload Image"
           file={wallet.image}
@@ -212,4 +197,5 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     letterSpacing: verticalScale(0.5),
   },
+  date: { fontWeight: 500, fontSize: verticalScale(18) },
 });

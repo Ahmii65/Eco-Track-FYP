@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import * as Icons from "phosphor-react-native";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { scale, verticalScale } from "react-native-size-matters";
 interface WalletListProps {
   index: number;
@@ -25,57 +26,65 @@ const WalletList = ({ index, item }: WalletListProps) => {
     });
   };
   return (
-    <View style={{ flex: 1, paddingHorizontal: scale(20) }}>
-      <TouchableOpacity
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          paddingBottom: verticalScale(15),
-        }}
-        onPress={openWallet}
-      >
-        <View
+    <Animated.View
+      entering={FadeInDown.delay(index * 60)
+        .springify()
+        .damping(18)
+        .mass(0.7)
+        .stiffness(90)}
+    >
+      <View style={{ flex: 1, paddingHorizontal: scale(20) }}>
+        <TouchableOpacity
           style={{
             flexDirection: "row",
             alignItems: "center",
-            flex: 1,
-            gap: verticalScale(12),
+            paddingBottom: verticalScale(15),
           }}
+          onPress={openWallet}
         >
-          <Image
-            source={item.image}
-            transition={100}
+          <View
             style={{
-              width: scale(40),
-              height: scale(40),
-              borderRadius: verticalScale(10),
+              flexDirection: "row",
+              alignItems: "center",
+              flex: 1,
+              gap: verticalScale(12),
             }}
-          />
-          <View>
-            <Text
+          >
+            <Image
+              source={item.image}
+              transition={100}
               style={{
-                color: theme.text,
-                fontWeight: "400",
-                fontSize: verticalScale(16),
+                width: scale(40),
+                height: scale(40),
+                borderRadius: verticalScale(10),
               }}
-            >
-              {item.name}
-            </Text>
-            <Text
-              style={{
-                color: theme.text,
-                fontWeight: "200",
-                fontSize: verticalScale(12),
-              }}
-            >
-              Rs {item.amount}
-            </Text>
+            />
+            <View>
+              <Text
+                style={{
+                  color: theme.text,
+                  fontWeight: "400",
+                  fontSize: verticalScale(16),
+                }}
+              >
+                {item.name}
+              </Text>
+              <Text
+                style={{
+                  color: theme.text,
+                  fontWeight: "200",
+                  fontSize: verticalScale(12),
+                }}
+              >
+                Rs {item.amount}
+              </Text>
+            </View>
           </View>
-        </View>
 
-        <Icons.CaretRightIcon color={theme.text} />
-      </TouchableOpacity>
-    </View>
+          <Icons.CaretRightIcon color={theme.text} />
+        </TouchableOpacity>
+      </View>
+    </Animated.View>
   );
 };
 

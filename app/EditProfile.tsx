@@ -246,10 +246,10 @@ const EditProfile = () => {
             paddingBottom: bottom + verticalScale(12),
           }}
         >
-          <TouchableButton loading={loading} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>Save Changes</Text>
-          </TouchableButton>
-        </View>
+              <TouchableButton loading={loading} onPress={handleSave}>
+                <Text style={styles.saveButtonText}>Save Changes</Text>
+              </TouchableButton>
+            </View>
       </View>
     </TouchableWithoutFeedback>
   );

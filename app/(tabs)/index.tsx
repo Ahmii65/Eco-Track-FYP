@@ -1,3 +1,4 @@
+import { colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
 import { getProfileImage } from "@/services/imageServices";
@@ -33,11 +34,9 @@ const Home = () => {
             />
           </View>
           <View>
-            <Text style={[styles.greeting, { color: theme.text }]}>
-              Hello,
-            </Text>
+            <Text style={[styles.greeting, { color: theme.text }]}>Hello,</Text>
             <Text style={[styles.userName, { color: theme.text }]}>
-              {user?.name || "EcoTrack User"}
+              {user?.name || "---"}
             </Text>
           </View>
         </View>
@@ -45,9 +44,7 @@ const Home = () => {
           style={[
             styles.notificationButton,
             {
-              backgroundColor: isDark
-                ? "rgba(255,255,255,0.08)"
-                : "rgba(0,0,0,0.06)",
+              backgroundColor: isDark ? colors.neutral700 : colors.neutral200,
               borderColor: isDark
                 ? "rgba(255,255,255,0.2)"
                 : "rgba(0,0,0,0.08)",
