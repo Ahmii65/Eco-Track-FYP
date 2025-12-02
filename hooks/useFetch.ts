@@ -11,7 +11,6 @@ import { StyleSheet } from "react-native";
 const useFetch = <T>(
   collectionName: string,
   constraints: QueryConstraint[] = [],
-  dependencies: any[] = []
 ) => {
   const [data, setData] = useState<T[]>([]);
   const [loading, setloading] = useState<boolean>(true);
@@ -41,7 +40,7 @@ const useFetch = <T>(
       }
     );
     return () => unsub();
-  }, dependencies);
+  }, []);
   return { loading, data, error };
 };
 

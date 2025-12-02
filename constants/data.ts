@@ -1,5 +1,4 @@
 import { CategoryType, ExpenseCategoriesType } from "@/types";
-import { colors } from "./theme";
 
 import * as Icons from "phosphor-react-native"; // Import all icons dynamically
 
@@ -32,7 +31,7 @@ export const expenseCategories: ExpenseCategoriesType = {
     label: "Entertainment",
     value: "entertainment",
     icon: Icons.FilmStrip,
-    bgColor: "#0f766e", // Darker Red-Brown
+    bgColor: "red", // Darker Red-Brown
   },
   dining: {
     label: "Dining",

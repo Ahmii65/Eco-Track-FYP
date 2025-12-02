@@ -12,13 +12,14 @@ import { MagnifyingGlassIcon, Plus } from "phosphor-react-native";
 import React from "react";
 import {
   ActivityIndicator,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import { scale, verticalScale } from "react-native-size-matters";
 
 const Expenses = () => {
   const { theme, isDark } = useTheme();
@@ -29,13 +30,11 @@ const Expenses = () => {
     data: transactions,
     loading: transactionLoading,
     error: transactionError,
-  } = useFetch<TransactionType>(
-    user?.uid ? "transactions" : "",
-    user?.uid
-      ? [where("uid", "==", user.uid), orderBy("date", "desc"), limit(30)]
-      : [],
-    [user?.uid]
-  );
+  } = useFetch<TransactionType>("transactions", [
+    where("uid", "==", user?.uid),
+    orderBy("date", "desc"),
+    limit(30),
+  ]);
 
   const handleClick = (item: TransactionType) => {
     router.push({
@@ -78,17 +77,29 @@ const Expenses = () => {
         },
       ]}
     >
-      <View
+      <Pressable
         style={[
           styles.header,
           {
-            backgroundColor: isDark ? colors.neutral700 : colors.neutral200,
-            borderColor: isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.08)",
+            backgroundColor: isDark ? colors.neutral800 : colors.neutral200,
           },
         ]}
+        onPress={() => {
+          router.push("/ExpenseSearch");
+        }}
       >
         <MagnifyingGlassIcon color={theme.text} size={scale(22)} />
-      </View>
+        <Text
+          style={{
+            color: theme.text,
+            fontSize: verticalScale(12),
+            paddingLeft: scale(5),
+            fontWeight: "400",
+          }}
+        >
+          Search your expenses
+        </Text>
+      </Pressable>
       <FlashList
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
@@ -165,12 +176,14 @@ const Expenses = () => {
 export default Expenses;
 
 const styles = StyleSheet.create({
-  main: { flex: 1, paddingHorizontal: scale(20), gap: verticalScale(20) },
+  main: { flex: 1, paddingHorizontal: scale(20), gap: verticalScale(14) },
   header: {
-    alignSelf: "flex-end",
-    padding: moderateScale(11.5),
-    borderWidth: 1,
-    borderRadius: verticalScale(15),
+    marginTop: verticalScale(10),
+    borderRadius: verticalScale(20),
+    height: verticalScale(45),
+    alignItems: "center",
+    paddingLeft: scale(15),
+    flexDirection: "row",
   },
   fab: {
     position: "absolute",
