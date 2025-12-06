@@ -1,4 +1,4 @@
-import { CategoryType, ExpenseCategoriesType } from "@/types";
+import { CategoryType, ExpenseCategoriesType, HomeType } from "@/types";
 
 import * as Icons from "phosphor-react-native"; // Import all icons dynamically
 
@@ -87,4 +87,43 @@ export const incomeCategory: CategoryType = {
 export const transactionTypes = [
   { label: "Expense", value: "expense" },
   { label: "Income", value: "income" },
+];
+
+export const homeBoxes: HomeType[] = [
+  {
+    label: "Calculate CFP",
+    value: "CarbonFootPrint",
+    icon: Icons.Calculator,
+    bgColor: "#16A34A",
+  },
+  {
+    label: "Water Usage",
+    value: "WaterUsage",
+    icon: Icons.Drop,
+    bgColor: "#0EA5E9",
+  },
+  {
+    label: "Electricity Usage",
+    value: "ElectricityUsage",
+    icon: Icons.Lightning,
+    bgColor: "#F59E0B",
+  },
+  {
+    label: "Achievements",
+    value: "Achievements",
+    icon: Icons.Trophy,
+    bgColor: "#8B5CF6",
+  },
+  {
+    label: "Rewards",
+    value: "Rewards",
+    icon: Icons.Gift,
+    bgColor: "#EC4899",
+  },
+  {
+    label: "Tips and Tricks",
+    value: "TipsAndTricks",
+    icon: Icons.Lightbulb,
+    bgColor: "#6366F1",
+  },
 ];

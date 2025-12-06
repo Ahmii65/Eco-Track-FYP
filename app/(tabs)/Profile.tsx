@@ -122,9 +122,7 @@ const Profile = () => {
             style={styles.profileImage}
           />
         </View>
-        <Text style={[styles.text, { color: theme.text }]}>
-          {user?.name || "Username"}
-        </Text>
+        <Text style={[styles.text, { color: theme.text }]}>{user?.name}</Text>
         {/* <Text style={[styles.text1, { color: theme.text }]}>{user?.email}</Text> */}
       </View>
 

@@ -34,7 +34,7 @@ const Statistics = () => {
       <SegmentedControl
         values={["Carbon Footprint", "Expenses"]}
         selectedIndex={selectedIndex}
-        style={{ height: verticalScale(30) }}
+        style={{ height: verticalScale(40) }}
         onChange={(event) => {
           setSelectedIndex(event.nativeEvent.selectedSegmentIndex);
         }}

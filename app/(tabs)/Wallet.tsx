@@ -125,6 +125,26 @@ const Wallet = () => {
             </Text>
           </View>
         )}
+        {wallets.length === 0 && (
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              paddingTop: verticalScale(40),
+            }}
+          >
+            <Text
+              style={{
+                fontSize: verticalScale(14),
+                // fontWeight: "500",
+                color: theme.text,
+              }}
+            >
+              No Wallets Found
+            </Text>
+          </View>
+        )}
+
         <FlatList
           data={wallets}
           contentContainerStyle={{

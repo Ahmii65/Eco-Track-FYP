@@ -1,19 +1,8 @@
 import { Timestamp } from "firebase/firestore";
 import { Icon } from "phosphor-react-native";
 import React, { ReactNode } from "react";
-import {
-  TextInput,
-  TextInputProps,
-  TextStyle,
-  TouchableOpacityProps,
-  ViewStyle,
-} from "react-native";
+import { ViewStyle } from "react-native";
 
-export type ModalWrapperProps = {
-  style?: ViewStyle;
-  children: React.ReactNode;
-  bg?: string;
-};
 export type accountOptionType = {
   title: string;
   icon: React.ReactNode;
@@ -79,21 +68,21 @@ export type TransactionItemProps = {
   handleClick: Function;
 };
 
-export interface InputProps extends TextInputProps {
-  icon?: React.ReactNode;
-  containerStyle?: ViewStyle;
-  inputStyle?: TextStyle;
-  inputRef?: React.RefObject<TextInput>;
-  //   label?: string;
-  //   error?: string;
-}
+// export interface InputProps extends TextInputProps {
+//   icon?: React.ReactNode;
+//   containerStyle?: ViewStyle;
+//   inputStyle?: TextStyle;
+//   inputRef?: React.RefObject<TextInput>;
+//   //   label?: string;
+//   //   error?: string;
+// }
 
-export interface CustomButtonProps extends TouchableOpacityProps {
-  style?: ViewStyle;
-  onPress?: () => void;
-  loading?: boolean;
-  children: React.ReactNode;
-}
+// export interface CustomButtonProps extends TouchableOpacityProps {
+//   style?: ViewStyle;
+//   onPress?: () => void;
+//   loading?: boolean;
+//   children: React.ReactNode;
+// }
 
 export type ImageUploadProps = {
   file?: any;
@@ -145,4 +134,11 @@ export type WalletType = {
   image: any;
   uid?: string;
   created?: Date;
+};
+
+export type HomeType = {
+  bgColor: string;
+  icon: Icon;
+  label: string;
+  value: string;
 };

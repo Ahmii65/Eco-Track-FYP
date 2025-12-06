@@ -173,6 +173,13 @@ const Expenses = () => {
           />
         ))}
       </View>
+      {transactions.length === 0 && (
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <Text style={{ fontSize: scale(13), color: theme.text }}>
+            No Transactions Found
+          </Text>
+        </View>
+      )}
     </ScrollView>
   );
 };

@@ -1,11 +1,13 @@
 import { AuthProvider } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import * as NavigationBar from "expo-navigation-bar";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { Platform, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Prevent the default splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -39,14 +41,19 @@ const StackLayout = () => {
     applySystemBars();
   }, [isDark]);
   return (
-    <>
-      <StatusBar style="auto" animated />
-      <View style={{ backgroundColor: theme.background, flex: 1 }}>
-        <Stack
-          screenOptions={{ headerShown: false, animation: "slide_from_right" }}
-        />
-      </View>
-    </>
+    <GestureHandlerRootView style={{ flex: 1, }}>
+      <BottomSheetModalProvider>
+        <StatusBar style="auto" animated />
+        <View style={{ backgroundColor: theme.background, flex: 1 }}>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              animation: "slide_from_right",
+            }}
+          />
+        </View>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 };
 export default function RootLayout() {

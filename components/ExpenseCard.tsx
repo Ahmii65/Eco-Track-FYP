@@ -1,5 +1,6 @@
 import { colors } from "@/constants/theme";
 import useTheme from "@/hooks/useColorScheme";
+import { LinearGradient } from "expo-linear-gradient";
 import { ArrowDown, ArrowUp, DotsThreeIcon } from "phosphor-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -18,15 +19,15 @@ const ExpenseCard = ({
   expense,
   loading,
 }: ExpenseCardProps) => {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   return (
-    <View
-      style={[
-        styles.main,
-        {
-          backgroundColor: isDark ? colors.neutral300 : colors.neutral200,
-        },
-      ]}
+    <LinearGradient
+      colors={
+        isDark ? [colors.neutral800, colors.neutral700] : ["#e5e5e5", "#d4d4d4"]
+      }
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.main}
     >
       <View
         style={{
@@ -38,14 +39,20 @@ const ExpenseCard = ({
           style={{
             fontSize: verticalScale(16),
             fontWeight: "500",
-            color: colors.neutral700,
+            color: theme.text,
           }}
         >
           Total Balance
         </Text>
-        <DotsThreeIcon size={verticalScale(26)} />
+        <DotsThreeIcon size={verticalScale(26)} color={theme.text} />
       </View>
-      <Text style={{ fontSize: verticalScale(26), fontWeight: "700" }}>
+      <Text
+        style={{
+          fontSize: verticalScale(26),
+          fontWeight: "700",
+          color: theme.text,
+        }}
+      >
         Rs {loading ? "..." : amount}
       </Text>
 
@@ -60,7 +67,9 @@ const ExpenseCard = ({
                 weight="bold"
               />
             </View>
-            <Text style={styles.summaryLabel}>Income</Text>
+            <Text style={[styles.summaryLabel, { color: theme.text }]}>
+              Income
+            </Text>
           </View>
           <Text style={[styles.summaryAmount, { color: colors.green }]}>
             Rs {loading ? "..." : income}
@@ -79,7 +88,9 @@ const ExpenseCard = ({
                 weight="bold"
               />
             </View>
-            <Text style={styles.summaryLabel}>Expenses</Text>
+            <Text style={[styles.summaryLabel, { color: theme.text }]}>
+              Expenses
+            </Text>
           </View>
           <Text
             style={[
@@ -91,7 +102,7 @@ const ExpenseCard = ({
           </Text>
         </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -144,7 +155,6 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: verticalScale(13),
-    color: colors.neutral700,
   },
   summaryAmount: {
     fontSize: verticalScale(16),
