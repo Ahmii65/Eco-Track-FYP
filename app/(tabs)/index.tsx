@@ -1,13 +1,12 @@
-import GeminiChat from "@/components/GeminiChat";
 import HomeBoxes from "@/components/HomeBoxes";
 import HomeHeader from "@/components/HomeHeader";
 import HomeSummaryCard from "@/components/HomeSummaryCard";
 import { homeBoxes } from "@/constants/data";
 import { colors } from "@/constants/theme";
 import useTheme from "@/hooks/useColorScheme";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { router } from "expo-router";
 import { ChatsCircleIcon } from "phosphor-react-native";
-import React, { useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -20,7 +19,6 @@ import { scale, verticalScale } from "react-native-size-matters";
 const Home = () => {
   const { theme } = useTheme();
   const { top } = useSafeAreaInsets();
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const AnimatedPressable = useMemo(() => {
     return Animated.createAnimatedComponent(Pressable);
   }, []);
@@ -79,12 +77,11 @@ const Home = () => {
         onPressIn={onPressIn}
         onPressOut={onPressOut}
         onPress={() => {
-          bottomSheetModalRef.current?.present();
+          router.push("/ChatScreen");
         }}
       >
         <ChatsCircleIcon color={colors.white} size={35} />
       </AnimatedPressable>
-      <GeminiChat bottomSheetModalRef={bottomSheetModalRef} />
     </View>
   );
 };

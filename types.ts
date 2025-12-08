@@ -107,6 +107,7 @@ export type UserDataType = {
 export type AuthContextType = {
   user: UserType;
   setUser: Function;
+  initializing?: boolean;
   login: (
     email: string,
     password: string
@@ -142,3 +143,11 @@ export type HomeType = {
   label: string;
   value: string;
 };
+
+
+export interface Message {
+  id: string;
+  text: string;
+  role: "user" | "model";
+  createdAt: Date;
+}

@@ -125,7 +125,7 @@ const Wallet = () => {
             </Text>
           </View>
         )}
-        {wallets.length === 0 && (
+        {wallets.length === 0 && !loading && (
           <View
             style={{
               justifyContent: "center",

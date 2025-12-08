@@ -9,9 +9,10 @@ import { moderateScale, verticalScale } from "react-native-size-matters";
 interface BackButtonProps {
   style?: ViewStyle;
   iconSize?: number;
+  onPress?: () => void;
 }
 
-const BackButton = ({ iconSize = 28, style }: BackButtonProps) => {
+const BackButton = ({ iconSize = 28, style, onPress }: BackButtonProps) => {
   const { isDark } = useTheme();
   return (
     <TouchableOpacity
@@ -22,7 +23,7 @@ const BackButton = ({ iconSize = 28, style }: BackButtonProps) => {
           backgroundColor: isDark ? colors.neutral600 : "rgba(10,10,10,0.09)",
         },
       ]}
-      onPress={router.back}
+      onPress={onPress ?? router.back}
     >
       <CaretLeft
         color={isDark ? colors.white : "black"}

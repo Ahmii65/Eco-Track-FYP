@@ -2,13 +2,7 @@ import useTheme from "@/hooks/useColorScheme";
 import { Image, StyleSheet, View } from "react-native";
 
 export default function Index() {
-  const { theme, isDark } = useTheme();
-  // useEffect(() => {
-  //   const timer = setTimeout(async () => {
-  //     router.push("/(auth)/welcome");
-  //   }, 1000);
-  //   return () => clearTimeout(timer);
-  // }, []);
+  const { theme } = useTheme();
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <View style={styles.animation}>

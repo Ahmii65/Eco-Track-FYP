@@ -25,24 +25,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           email: firebaseUser.email,
           name: firebaseUser.displayName,
         });
-
         if (initializing) {
           updateUserData(firebaseUser.uid);
           router.replace("/(tabs)");
         }
       } else {
         setUser(null);
-
         if (initializing) {
           router.replace("/(auth)/welcome");
         }
       }
 
-      if (initializing) setInitializing(false);
+      setInitializing(false);
     });
 
     return () => unsub();
   }, []);
+
+  // useEffect(() => {
+  //   if (initializing) return;
+
+  //   if (user) {
+  //     router.replace("/(tabs)");
+  //   }
+  //   if (!user) {
+  //     router.replace("/(auth)/welcome");
+  //   }
+  // }, [user, initializing, segments]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -124,7 +133,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     login,
     register,
     updateUserData,
-
   };
 
   return (

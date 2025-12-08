@@ -11,9 +11,9 @@ const _layout = () => {
         <Stack
           screenOptions={{ headerShown: false, animation: "slide_from_right" }}
         >
+          <Stack.Screen name="welcome" />
           <Stack.Screen name="Login" />
           <Stack.Screen name="Register" />
-          <Stack.Screen name="welcome" />
           <Stack.Screen
             name="ForgotPassword"
             options={{ presentation: "modal", animation: "slide_from_bottom" }}

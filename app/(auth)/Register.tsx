@@ -50,7 +50,7 @@ const Register = () => {
     setLoading(false);
     if (!response.success) {
       Alert.alert("Registration Error", response?.msg);
-      console.log(response?.msg);
+      // console.log(response?.msg);
     }
   };
 
