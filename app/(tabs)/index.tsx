@@ -3,6 +3,7 @@ import HomeHeader from "@/components/HomeHeader";
 import HomeSummaryCard from "@/components/HomeSummaryCard";
 import { homeBoxes } from "@/constants/data";
 import { colors } from "@/constants/theme";
+import { useAuth } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
 import { router } from "expo-router";
 import { ChatsCircleIcon } from "phosphor-react-native";
@@ -19,6 +20,7 @@ import { scale, verticalScale } from "react-native-size-matters";
 const Home = () => {
   const { theme } = useTheme();
   const { top } = useSafeAreaInsets();
+  const { user, updateUserData } = useAuth();
   const AnimatedPressable = useMemo(() => {
     return Animated.createAnimatedComponent(Pressable);
   }, []);
@@ -38,6 +40,13 @@ const Home = () => {
   const onPressOut = () => {
     fab.value = withSpring(1);
   };
+
+  // useEffect(() => {
+  //   if (user?.uid) {
+  //     updateUserData(user.uid);
+  //   }
+  // }, [user]);
+
   return (
     <View
       style={[

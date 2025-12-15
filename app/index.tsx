@@ -3,11 +3,17 @@ import { Image, StyleSheet, View } from "react-native";
 
 export default function Index() {
   const { theme } = useTheme();
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     router.replace("/(tabs)");
+  //   }, 2000);
+  //   return () => clearTimeout(timeout);
+  // }, []);
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <View style={styles.animation}>
         <Image
-          source={require("../assets/images/splashImage.png")}
+          source={require("../assets/images/splash.png")}
           style={styles.image}
           resizeMode="contain"
         />

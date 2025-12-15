@@ -4,26 +4,27 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { View } from "react-native";
 
+// SplashScreen.preventAutoHideAsync();
 const StackLayout = () => {
   const { theme } = useTheme();
+  // useEffect(() => {
+  //   SplashScreen.hideAsync();
+  // }, []);
   return (
     <>
-      <StatusBar style="auto" animated />
+      {/* <StatusBar style="auto" animated /> */}
       <View style={{ backgroundColor: theme.background, flex: 1 }}>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            animation: "slide_from_right",
-          }}
-        />
+        {/* <StatusBar animated style="auto" /> */}
+        <AuthProvider>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              animation: "slide_from_right",
+            }}
+          />
+        </AuthProvider>
       </View>
     </>
   );
 };
-export default function RootLayout() {
-  return (
-    <AuthProvider>
-      <StackLayout />
-    </AuthProvider>
-  );
-}
+export default StackLayout;

@@ -5,7 +5,6 @@ export const geminiCall = async (input: string) => {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
   try {
     const response = await axios.post(url, {
-      model: "gemini-2.5-flash",
       contents: [
         {
           parts: [
@@ -18,7 +17,7 @@ export const geminiCall = async (input: string) => {
     });
     return response?.data;
   } catch (error: any) {
-    console.log(error);
+    console.log("Gemini API Error:", error.response?.data || error.message);
     throw error;
   }
 };

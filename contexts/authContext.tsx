@@ -7,7 +7,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { AuthContextType, UserType } from "../types";
+import { AuthContextType, Message, UserType } from "../types";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -16,17 +16,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<UserType | null>(null);
   const [initializing, setInitializing] = useState<boolean>(true);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        setUser({
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          name: firebaseUser.displayName,
-        });
         if (initializing) {
-          updateUserData(firebaseUser.uid);
+          updateUserData(firebaseUser.uid); // ensure user state is set before navigating
+
           router.replace("/(tabs)");
         }
       } else {
@@ -35,23 +32,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           router.replace("/(auth)/welcome");
         }
       }
-
       setInitializing(false);
     });
-
     return () => unsub();
   }, []);
-
-  // useEffect(() => {
-  //   if (initializing) return;
-
-  //   if (user) {
-  //     router.replace("/(tabs)");
-  //   }
-  //   if (!user) {
-  //     router.replace("/(auth)/welcome");
-  //   }
-  // }, [user, initializing, segments]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -120,7 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           name: data?.name || null,
           image: data?.image || null,
         };
-        setUser({ ...userData });
+        setUser(userData);
       }
     } catch (error: any) {
       let msg = error.message;
@@ -133,6 +117,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     login,
     register,
     updateUserData,
+    messages,
+    setMessages,
   };
 
   return (

@@ -33,6 +33,7 @@ const ChatList = ({ item }: { item: Message }) => {
         ]}
       >
         <Text
+          selectable={true}
           style={[
             styles.text,
             {

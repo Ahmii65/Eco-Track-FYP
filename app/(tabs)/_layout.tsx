@@ -17,7 +17,7 @@ const _layout = () => {
   const { isDark, theme } = useTheme();
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <StatusBar style="auto" animated />
+      <StatusBar hidden />
       <Tabs
         screenOptions={{
           headerShown: false,

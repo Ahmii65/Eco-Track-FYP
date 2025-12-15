@@ -118,6 +118,10 @@ export type AuthContextType = {
     name: string
   ) => Promise<{ success: boolean; msg?: string }>;
   updateUserData: (userId: string) => Promise<void>;
+  messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  // logout: () => Promise<void>;
+  // logout: () => Promise<{ success: boolean; msg?: string }>;
 };
 
 export type ResponseType = {
@@ -143,7 +147,6 @@ export type HomeType = {
   label: string;
   value: string;
 };
-
 
 export interface Message {
   id: string;

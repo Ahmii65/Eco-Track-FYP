@@ -20,7 +20,7 @@ const TransactionListItem = ({
   const IconComponent = category.icon;
   return (
     <Animated.View
-      entering={FadeInDown.delay(index * 80)
+      entering={FadeInDown.delay(index * 60)
         .springify()
         .damping(18)
         .mass(0.7)
