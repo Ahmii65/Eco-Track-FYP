@@ -2,7 +2,6 @@ import AnimatedTabIcons from "@/components/AnimatedTabIcons";
 import { colors } from "@/constants/theme";
 import useTheme from "@/hooks/useColorScheme";
 import { Tabs } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import {
   ChartBar,
   CurrencyDollar,
@@ -17,7 +16,6 @@ const _layout = () => {
   const { isDark, theme } = useTheme();
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <StatusBar hidden />
       <Tabs
         screenOptions={{
           headerShown: false,

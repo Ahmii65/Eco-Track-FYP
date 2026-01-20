@@ -37,7 +37,7 @@ const useFetch = <T>(
         console.log("Error fetching data", err);
         setError(err.message);
         setloading(false);
-      }
+      },
     );
     return () => unsub();
   }, []);

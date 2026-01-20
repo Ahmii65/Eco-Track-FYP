@@ -110,12 +110,12 @@ export type AuthContextType = {
   initializing?: boolean;
   login: (
     email: string,
-    password: string
+    password: string,
   ) => Promise<{ success: boolean; msg?: string }>;
   register: (
     email: string,
     password: string,
-    name: string
+    name: string,
   ) => Promise<{ success: boolean; msg?: string }>;
   updateUserData: (userId: string) => Promise<void>;
   messages: Message[];
@@ -154,3 +154,12 @@ export interface Message {
   role: "user" | "model";
   createdAt: Date;
 }
+
+export type CarbonActivityType = {
+  id?: string;
+  title: string;
+  category: string;
+  impact: number; // in kg CO2
+  date: Date | Timestamp | string;
+  uid?: string;
+};

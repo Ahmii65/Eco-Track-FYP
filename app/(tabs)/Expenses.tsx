@@ -64,7 +64,7 @@ const Expenses = () => {
       }
       return acc;
     },
-    { income: 0, expense: 0, balance: 0 }
+    { income: 0, expense: 0, balance: 0 },
   );
 
   return (

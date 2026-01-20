@@ -90,7 +90,7 @@ const AddTransaction = () => {
       date,
       walletId,
       type,
-      image: image || null, 
+      image: image || null,
       uid: user?.uid,
     };
     if (oldTransaction?.id) {
@@ -113,7 +113,7 @@ const AddTransaction = () => {
     const res = await createOrUpdateTransaction(
       transactionData,
       walletId,
-      oldTransaction?.id
+      oldTransaction?.id,
     );
     setLoading(false);
     // console.log(res);
