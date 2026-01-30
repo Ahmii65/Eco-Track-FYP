@@ -4,9 +4,8 @@ import { useAuth } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
 import { geminiCall } from "@/services/geminiService";
 import { Message } from "@/types";
-import { LinearGradient } from "expo-linear-gradient";
 import { PaperPlaneRight } from "phosphor-react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -16,12 +15,18 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale } from "react-native-size-matters";
 import BackButton from "../../components/BackButton";
 import ChatList from "../../components/ChatList";
 import TypingIndicator from "../../components/TypingIndicator";
-import { StatusBar } from "expo-status-bar";
 
 const ChatScreen = () => {
   const { theme, isDark } = useTheme();
@@ -82,16 +87,26 @@ const ChatScreen = () => {
     "Hello!",
     "How can I save more energy?",
     "Give me eco-friendly tips",
-    // "Track my daily emissions",
     "Suggest sustainable habits",
   ];
-  const gradients = [
-    ["#86efac", "#22c55e"], // Green
-    ["#7dd3fc", "#0ea5e9"], // Blue
-    ["#fda4af", "#e11d48"], // Rose
-    ["#fde047", "#eab308"], // Yellow
-    ["#c4b5fd", "#7c3aed"], // Violet
-  ];
+
+  const translateX = useSharedValue(0);
+
+  useEffect(() => {
+    // Estimate width of content or just use a safe large number for 4 sets of items
+    // If each item is avg 120px + 20px margin * 4 items = 560px per set.
+    // We want to scroll one full set length then reset.
+    // Let's assume ~600px for one set.
+    translateX.value = withRepeat(
+      withTiming(-800, { duration: 20000, easing: Easing.linear }),
+      -1,
+      false,
+    );
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
 
   return (
     <AndroidKeyboardAvoidingView style={{ flex: 1 }}>
@@ -119,10 +134,11 @@ const ChatScreen = () => {
         </View>
         <FlatList<Message>
           ref={flatListRef}
-          contentContainerStyle={messages.length === 0 ? { flex: 1 } : {}}
+          contentContainerStyle={
+            messages.length === 0 ? { flex: 1, justifyContent: "center" } : {}
+          }
           data={messages}
           inverted={messages.length > 0}
-          // style={{ flex: 1 }}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => {
             return <ChatList item={item} />;
@@ -130,10 +146,9 @@ const ChatScreen = () => {
           ListEmptyComponent={() => (
             <View
               style={{
-                flex: 1,
                 alignItems: "center",
                 justifyContent: "center",
-                paddingTop: verticalScale(20),
+                paddingBottom: verticalScale(50),
               }}
             >
               <Text
@@ -141,54 +156,57 @@ const ChatScreen = () => {
                   fontSize: verticalScale(20),
                   fontWeight: "600",
                   color: theme.text,
-                  marginBottom: verticalScale(20),
                 }}
               >
                 What can I help with?
               </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  justifyContent: "center",
-                }}
-              >
-                {suggestedMessages.map((msg, idx) => (
-                  <TouchableOpacity
-                    key={idx}
-                    onPress={() => setInput(msg)}
-                    style={{
-                      margin: scale(5),
-                    }}
-                  >
-                    <LinearGradient
-                      colors={gradients[idx % gradients.length] as any}
-                      style={{
-                        paddingVertical: verticalScale(12),
-                        paddingHorizontal: scale(20),
-                        borderRadius: scale(20),
-                      }}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                    >
-                      <Text
-                        style={{
-                          color: colors.white,
-                          textAlign: "center",
-                          fontWeight: "500",
-                          fontSize: 16,
-                        }}
-                      >
-                        {msg}
-                      </Text>
-                    </LinearGradient>
-                  </TouchableOpacity>
-                ))}
-              </View>
             </View>
           )}
           ListHeaderComponent={() => (loading ? <TypingIndicator /> : null)}
         />
+
+        {messages.length === 0 && (
+          <View style={{ marginBottom: verticalScale(10), overflow: "hidden" }}>
+            <Animated.View style={[{ flexDirection: "row" }, animatedStyle]}>
+              {[
+                ...suggestedMessages,
+                ...suggestedMessages,
+                ...suggestedMessages,
+                ...suggestedMessages,
+              ].map((msg, idx) => (
+                <TouchableOpacity
+                  key={idx}
+                  onPress={() => setInput(msg)}
+                  style={{
+                    marginRight: scale(10),
+                    backgroundColor: isDark ? colors.neutral800 : colors.white,
+                    paddingVertical: verticalScale(10),
+                    paddingHorizontal: scale(16),
+                    borderRadius: scale(20),
+                    borderWidth: 1,
+                    borderColor: isDark ? colors.neutral700 : colors.neutral200,
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.05,
+                    shadowRadius: 4,
+                    elevation: 2,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: theme.text,
+                      fontWeight: "500",
+                      fontSize: 14,
+                    }}
+                  >
+                    {msg}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </Animated.View>
+          </View>
+        )}
+
         <View
           style={{
             height: verticalScale(55),
@@ -214,6 +232,7 @@ const ChatScreen = () => {
               style={{
                 color: theme.text,
                 flex: 1,
+                paddingLeft: scale(5),
                 fontSize: verticalScale(13),
               }}
             />

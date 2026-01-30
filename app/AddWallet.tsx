@@ -7,7 +7,7 @@ import useTheme from "@/hooks/useColorScheme";
 import { createOrUpdateWallet, deleteWallet } from "@/services/walletService";
 import { WalletType } from "@/types";
 import { router, useLocalSearchParams } from "expo-router";
-import * as Icons from "phosphor-react-native";
+import { TrashIcon } from "phosphor-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { Alert, StyleSheet, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -165,7 +165,7 @@ const AddWallet = () => {
               onPress={handleDeleteWallet}
               loading={Deleteloading}
             >
-              <Icons.TrashIcon color={"white"} />
+              <TrashIcon color={"white"} />
             </TouchableButton>
           )}
           <TouchableButton

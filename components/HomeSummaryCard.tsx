@@ -6,21 +6,34 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { scale, verticalScale } from "react-native-size-matters";
 
-const HomeSummaryCard = () => {
+interface HomeSummaryCardProps {
+  totalImpact: number;
+  electricityUsage: number;
+  waterUsage: number;
+}
+
+const HomeSummaryCard = ({
+  totalImpact = 0,
+  electricityUsage = 0,
+  waterUsage = 0,
+}: HomeSummaryCardProps) => {
   const { theme, isDark } = useTheme();
   const [warning, setwarning] = useState<boolean>(false);
 
-  // Mock Data
-  const carbonFootprint = 201; // kgCO2
+  // Constants
   const maxFootprint = 200;
-  const waterUsage = 120; // Liters
-  const electricityUsage = 45; // kWh
-  const progress = Math.min(carbonFootprint / maxFootprint, 1) * 100;
-  const isLimitExceeded = carbonFootprint > maxFootprint;
+
+  const progress = Math.min(totalImpact / maxFootprint, 1) * 100;
+  const isLimitExceeded = totalImpact > maxFootprint;
+
+  // Round for display
+  const displayImpact = Math.round(totalImpact);
 
   useEffect(() => {
     if (isLimitExceeded) {
       setwarning(true);
+    } else {
+      setwarning(false);
     }
   }, [isLimitExceeded]);
 
@@ -55,7 +68,7 @@ const HomeSummaryCard = () => {
             </Text>
           </View>
           <Text style={[styles.mainValue, { color: theme.text }]}>
-            {carbonFootprint} <Text style={styles.unit}>kgCO2</Text>
+            {displayImpact} <Text style={styles.unit}>kgCO2</Text>
           </Text>
         </View>
 
@@ -67,8 +80,8 @@ const HomeSummaryCard = () => {
                 isLimitExceeded
                   ? ["#ef4444", "#b91c1c"]
                   : progress > 60
-                  ? ["#f59e0b", "#f97316"]
-                  : ["#22c55e", "#16a34a"]
+                    ? ["#f59e0b", "#f97316"]
+                    : ["#22c55e", "#16a34a"]
               } // Green -> Yellow -> Red
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
@@ -90,7 +103,7 @@ const HomeSummaryCard = () => {
             </View>
             <View>
               <Text style={[styles.statValue, { color: theme.text }]}>
-                {waterUsage}L
+                {waterUsage} L
               </Text>
               <Text style={styles.statLabel}>Water</Text>
             </View>
@@ -168,6 +181,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(20),
     paddingVertical: verticalScale(16),
     justifyContent: "space-between",
+    // Premium Shadow
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
   },
   header: {
     marginBottom: verticalScale(10),

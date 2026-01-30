@@ -15,7 +15,7 @@ import { TransactionType, WalletType } from "@/types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { router, useLocalSearchParams } from "expo-router";
 import { orderBy, where } from "firebase/firestore";
-import * as Icons from "phosphor-react-native";
+import { TrashIcon } from "phosphor-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
@@ -421,7 +421,7 @@ const AddTransaction = () => {
             onPress={handleDeleteTransaction}
             loading={Deleteloading}
           >
-            <Icons.TrashIcon color={"white"} />
+            <TrashIcon color={"white"} />
           </TouchableButton>
         )}
         <TouchableButton

@@ -1,15 +1,18 @@
 import { AuthProvider } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
+import { processNotifications } from "@/services/notificationService";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import { View } from "react-native";
 
 // SplashScreen.preventAutoHideAsync();
 const StackLayout = () => {
   const { theme } = useTheme();
-  // useEffect(() => {
-  //   SplashScreen.hideAsync();
-  // }, []);
+
+  useEffect(() => {
+    processNotifications();
+  }, []);
+
   return (
     <>
       {/* <StatusBar style="auto" animated /> */}

@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
 import { getProfileImage } from "@/services/imageServices";
 import { Image } from "expo-image";
-import * as Icons from "phosphor-react-native";
+import { BellSimple } from "phosphor-react-native";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { scale, verticalScale } from "react-native-size-matters";
@@ -37,7 +37,7 @@ const HomeHeader = () => {
           },
         ]}
       >
-        <Icons.BellSimple size={scale(22)} color={theme.text} />
+        <BellSimple size={scale(22)} color={theme.text} />
       </TouchableOpacity>
     </View>
   );

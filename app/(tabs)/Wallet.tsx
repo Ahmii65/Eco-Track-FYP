@@ -7,7 +7,7 @@ import useFetch from "@/hooks/useFetch";
 import { WalletType } from "@/types";
 import { router } from "expo-router";
 import { orderBy, where } from "firebase/firestore";
-import * as Icons from "phosphor-react-native";
+import { PlusCircleIcon } from "phosphor-react-native";
 import React from "react";
 import {
   FlatList,
@@ -102,11 +102,7 @@ const Wallet = () => {
               router.push("/AddWallet");
             }}
           >
-            <Icons.PlusCircleIcon
-              size={34}
-              weight="fill"
-              color={colors.primary}
-            />
+            <PlusCircleIcon size={34} weight="fill" color={colors.primary} />
           </TouchableOpacity>
         </View>
         {loading && <Loading />}

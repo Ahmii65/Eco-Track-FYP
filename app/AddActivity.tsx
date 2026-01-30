@@ -13,7 +13,7 @@ import {
 import { CarbonActivityType } from "@/types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { router, useLocalSearchParams } from "expo-router";
-import * as Icons from "phosphor-react-native";
+import { Trash } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -149,7 +149,7 @@ const AddActivity = () => {
                       ? colors.neutral800
                       : colors.neutral200,
                   // borderColor: isSelected ? colors.primaryDark : "transparent",
-                  borderWidth: isSelected ? 2 : 0,
+                  // borderWidth: isSelected ? 2 : 0,
                 },
               ]}
               onPress={() => {
@@ -185,7 +185,11 @@ const AddActivity = () => {
     <View
       style={[
         styles.main,
-        { backgroundColor: theme.background, paddingTop: top + 5 },
+        {
+          backgroundColor: theme.background,
+          paddingTop: top + 5,
+          paddingBottom: bottom,
+        },
       ]}
     >
       <View style={styles.header}>
@@ -219,7 +223,11 @@ const AddActivity = () => {
 
             {selectedCategory && (
               <View
-                style={{ gap: verticalScale(15), marginTop: verticalScale(10) }}
+                style={{
+                  gap: verticalScale(15),
+                  marginTop: verticalScale(10),
+                  paddingBottom: verticalScale(20),
+                }}
               >
                 {/* Quantity */}
                 <Text style={[styles.label, { color: theme.text }]}>
@@ -294,41 +302,49 @@ const AddActivity = () => {
                     onChange={onDateChange}
                   />
                 )}
-
-                {/* Submit Button (Only show when category selected) */}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    paddingTop: verticalScale(10),
-                  }}
-                >
-                  {isUpdate && (
-                    <TouchableButton
-                      style={{
-                        backgroundColor: colors.rose,
-                        marginRight: 10,
-                        width: 50,
-                      }}
-                      onPress={handleDelete}
-                      loading={deleteLoading}
-                    >
-                      <Icons.TrashIcon color="white" />
-                    </TouchableButton>
-                  )}
-                  <TouchableButton
-                    onPress={onSubmit}
-                    loading={loading}
-                    style={{ flex: 1 }}
-                  >
-                    <Text style={styles.btnText}>
-                      {isUpdate ? "Update" : "Save Activity"}
-                    </Text>
-                  </TouchableButton>
-                </View>
               </View>
             )}
           </AndroidKeyboardAvoidingView>
         </ScrollView>
+
+        {/* Sticky Bottom Buttons */}
+        {selectedCategory && (
+          <View
+            style={{
+              paddingHorizontal: scale(20),
+              paddingTop: verticalScale(10),
+              paddingBottom: verticalScale(10),
+              backgroundColor: theme.background, // Match background to cover scroll content
+              borderTopWidth: 1,
+              borderTopColor: isDark ? colors.neutral800 : colors.neutral200,
+            }}
+          >
+            <View style={{ flexDirection: "row" }}>
+              {isUpdate && (
+                <TouchableButton
+                  style={{
+                    backgroundColor: colors.rose,
+                    marginRight: 10,
+                    width: 50,
+                  }}
+                  onPress={handleDelete}
+                  loading={deleteLoading}
+                >
+                  <Trash color="white" />
+                </TouchableButton>
+              )}
+              <TouchableButton
+                onPress={onSubmit}
+                loading={loading}
+                style={{ flex: 1 }}
+              >
+                <Text style={styles.btnText}>
+                  {isUpdate ? "Update" : "Save Activity"}
+                </Text>
+              </TouchableButton>
+            </View>
+          </View>
+        )}
       </KeyboardAvoidingView>
     </View>
   );

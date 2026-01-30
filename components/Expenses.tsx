@@ -25,7 +25,7 @@ const Expenses = () => {
   const filters = ["Weekly", "Monthly", "Yearly"];
   const { theme, isDark } = useTheme();
   const [filter, setFilter] = useState<"Weekly" | "Monthly" | "Yearly">(
-    "Weekly"
+    "Weekly",
   );
   const [chartLoading, setchartLoading] = useState<boolean>(false);
   const [chartData, setChartData] = useState<any>([]);

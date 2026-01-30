@@ -24,7 +24,7 @@ import { scale } from "react-native-size-matters";
 export const createOrUpdateTransaction = async (
   transaction: TransactionType,
   walletId: string,
-  transactionId?: string
+  transactionId?: string,
 ): Promise<ResponseType> => {
   try {
     const walletRef = doc(fireStore, "wallets", walletId);
@@ -182,7 +182,7 @@ export const getWeeklyData = async (uid: string) => {
       where("date", ">=", Timestamp.fromDate(sevenDaysAgo)),
       where("date", "<=", Timestamp.fromDate(today)),
       where("uid", "==", uid),
-      orderBy("date", "desc")
+      orderBy("date", "desc"),
     );
 
     const querySnapshot = await getDocs(transactionQuery);
@@ -247,7 +247,7 @@ export const getMonthlyData = async (uid: string) => {
       where("date", ">=", Timestamp.fromDate(twelveMonthsAgo)),
       where("date", "<=", Timestamp.fromDate(today)),
       where("uid", "==", uid),
-      orderBy("date", "desc")
+      orderBy("date", "desc"),
     );
 
     const querySnapshot = await getDocs(transactionQuery);
@@ -267,7 +267,7 @@ export const getMonthlyData = async (uid: string) => {
       });
       const shortYear = transactionDate.getFullYear().toString().slice(-2);
       const formattedMonthYear = monthlyData.find(
-        (month) => month.month === `${monthName} ${shortYear}`
+        (month) => month.month === `${monthName} ${shortYear}`,
       );
 
       if (formattedMonthYear) {
@@ -309,7 +309,7 @@ export const getYearlyData = async (uid: string) => {
     const transactionQuery = query(
       collection(db, "transactions"),
       where("uid", "==", uid),
-      orderBy("date", "desc")
+      orderBy("date", "desc"),
     );
 
     const querySnapshot = await getDocs(transactionQuery);
@@ -336,7 +336,7 @@ export const getYearlyData = async (uid: string) => {
         .getFullYear();
 
       const formattedYear = yearlyData.find(
-        (year: any) => year.year === transactionYear.toString()
+        (year: any) => year.year === transactionYear.toString(),
       );
 
       if (formattedYear) {

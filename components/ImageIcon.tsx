@@ -4,7 +4,7 @@ import { getfilePath } from "@/services/imageServices";
 import { ImageUploadProps } from "@/types";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import * as Icons from "phosphor-react-native";
+import { UploadIcon, X } from "phosphor-react-native";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { scale, verticalScale } from "react-native-size-matters";
@@ -48,7 +48,7 @@ const ImageIcon = ({
             containerStyle && containerStyle,
           ]}
         >
-          <Icons.UploadIcon color={theme.text} />
+          <UploadIcon color={theme.text} />
           {placeholder && (
             <Text style={{ fontSize: verticalScale(15), color: theme.text }}>
               {placeholder}
@@ -65,7 +65,7 @@ const ImageIcon = ({
             transition={100}
           />
           <TouchableOpacity style={styles.deleteIcon} onPress={onClear}>
-            <Icons.X size={scale(20)} weight="bold" color={theme.text} />
+            <X size={scale(20)} weight="bold" color={theme.text} />
           </TouchableOpacity>
         </View>
       )}

@@ -2,7 +2,7 @@ import useTheme from "@/hooks/useColorScheme";
 import { WalletType } from "@/types";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import * as Icons from "phosphor-react-native";
+import { CaretRightIcon } from "phosphor-react-native";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
@@ -81,7 +81,7 @@ const WalletList = ({ index, item }: WalletListProps) => {
             </View>
           </View>
 
-          <Icons.CaretRightIcon color={theme.text} />
+          <CaretRightIcon color={theme.text} />
         </TouchableOpacity>
       </View>
     </Animated.View>

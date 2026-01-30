@@ -3,6 +3,7 @@ import {
   Bus,
   Car,
   ForkKnife,
+  HandHeart,
   Leaf,
   Lightning,
   Train,
@@ -81,5 +82,21 @@ export const cfpCategories = [
     unit: "kWh",
     icon: Lightning,
     color: "#eab308",
+  },
+  {
+    label: "Plant a Tree",
+    value: "plant_tree",
+    factor: -10.0, // Negative for carbon removal (symbolic)
+    unit: "tree",
+    icon: Leaf,
+    color: "#16a34a", // Green 600
+  },
+  {
+    label: "Volunteer",
+    value: "volunteer",
+    factor: 0,
+    unit: "hr",
+    icon: HandHeart,
+    color: "#9333ea", // Purple 600
   },
 ];

@@ -163,3 +163,19 @@ export type CarbonActivityType = {
   date: Date | Timestamp | string;
   uid?: string;
 };
+
+export type WaterLogType = {
+  id?: string;
+  title?: string;
+  liters: number;
+  date: Date | Timestamp | string;
+  uid?: string;
+};
+
+export type ElectricityLogType = {
+  id?: string;
+  title?: string;
+  kwh: number;
+  date: Date | Timestamp | string;
+  uid?: string;
+};
