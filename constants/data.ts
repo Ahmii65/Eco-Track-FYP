@@ -114,12 +114,12 @@ export const homeBoxes: HomeType[] = [
     icon: Icons.Trophy,
     bgColor: "#8B5CF6",
   },
-  {
-    label: "Rewards",
-    value: "Rewards",
-    icon: Icons.Gift,
-    bgColor: "#EC4899",
-  },
+  // {
+  //   label: "Rewards",
+  //   value: "Rewards",
+  //   icon: Icons.Gift,
+  //   bgColor: "#EC4899",
+  // },
   {
     label: "Tips and Tricks",
     value: "TipsAndTricks",

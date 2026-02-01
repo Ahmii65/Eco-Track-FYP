@@ -9,9 +9,8 @@ import { router } from "expo-router";
 import { signOut } from "firebase/auth";
 import {
   CaretRight,
-  FileText,
   Info,
-  Shield,
+  Palette,
   SignOut,
   User,
 } from "phosphor-react-native";
@@ -45,7 +44,7 @@ const Profile = () => {
           },
         },
       ],
-      { cancelable: true }
+      { cancelable: true },
     );
   };
 
@@ -54,23 +53,14 @@ const Profile = () => {
       label: "Edit Profile",
       icon: User,
       onPress: () => {
-        {
-          router.push("/EditProfile");
-        }
+        router.push("/EditProfile");
       },
     },
     {
-      label: "Privacy Policy",
-      icon: Shield,
+      label: "App Theme",
+      icon: Palette,
       onPress: () => {
-        router.push("/PrivacyPolicy");
-      },
-    },
-    {
-      label: "Terms and Conditions",
-      icon: FileText,
-      onPress: () => {
-        router.push("/TermsAndConditions");
+        router.push("/AppTheme");
       },
     },
     {
@@ -177,6 +167,9 @@ const Profile = () => {
           })}
         </View>
       </View>
+
+      {/* Spacer to push content to bottom */}
+      <View style={{ flex: 1 }} />
 
       {/* Logout Button */}
       <View style={styles.logoutSection}>

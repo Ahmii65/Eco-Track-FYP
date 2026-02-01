@@ -28,7 +28,7 @@ const HomeHeader = () => {
           </Text>
         </View>
       </View>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={[
           styles.notificationButton,
           {
@@ -38,7 +38,7 @@ const HomeHeader = () => {
         ]}
       >
         <BellSimple size={scale(22)} color={theme.text} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };

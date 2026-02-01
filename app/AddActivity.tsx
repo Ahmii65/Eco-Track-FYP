@@ -134,49 +134,53 @@ const AddActivity = () => {
   const renderCategoryGrid = () => {
     return (
       <View style={styles.gridContainer}>
-        {cfpCategories.map((cat, index) => {
-          const isSelected = selectedCategory?.value === cat.value;
-          const Icon = cat.icon;
-          return (
-            <Pressable
-              key={index}
-              style={[
-                styles.gridItem,
-                {
-                  backgroundColor: isSelected
-                    ? colors.primary
-                    : isDark
-                      ? colors.neutral800
-                      : colors.neutral200,
-                  // borderColor: isSelected ? colors.primaryDark : "transparent",
-                  // borderWidth: isSelected ? 2 : 0,
-                },
-              ]}
-              onPress={() => {
-                setSelectedCategory(cat);
-                setActivity({ ...activity, category: cat.value });
-              }}
-            >
-              <Icon
-                size={verticalScale(28)}
-                color={isSelected ? colors.black : cat.color}
-                weight={isSelected ? "fill" : "regular"}
-              />
-              <Text
+        {cfpCategories
+          .filter(
+            (cat) => cat.value !== "plant_tree" && cat.value !== "volunteer",
+          )
+          .map((cat, index) => {
+            const isSelected = selectedCategory?.value === cat.value;
+            const Icon = cat.icon;
+            return (
+              <Pressable
+                key={index}
                 style={[
-                  styles.gridLabel,
+                  styles.gridItem,
                   {
-                    color: isSelected ? colors.black : theme.text,
-                    fontWeight: isSelected ? "700" : "500",
+                    backgroundColor: isSelected
+                      ? colors.primary
+                      : isDark
+                        ? colors.neutral800
+                        : colors.neutral200,
+                    // borderColor: isSelected ? colors.primaryDark : "transparent",
+                    // borderWidth: isSelected ? 2 : 0,
                   },
                 ]}
-                numberOfLines={2}
+                onPress={() => {
+                  setSelectedCategory(cat);
+                  setActivity({ ...activity, category: cat.value });
+                }}
               >
-                {cat.label}
-              </Text>
-            </Pressable>
-          );
-        })}
+                <Icon
+                  size={verticalScale(28)}
+                  color={isSelected ? colors.black : cat.color}
+                  weight={isSelected ? "fill" : "regular"}
+                />
+                <Text
+                  style={[
+                    styles.gridLabel,
+                    {
+                      color: isSelected ? colors.black : theme.text,
+                      fontWeight: isSelected ? "700" : "500",
+                    },
+                  ]}
+                  numberOfLines={2}
+                >
+                  {cat.label}
+                </Text>
+              </Pressable>
+            );
+          })}
       </View>
     );
   };

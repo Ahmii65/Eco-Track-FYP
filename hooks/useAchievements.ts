@@ -6,7 +6,6 @@ import {
   Coins,
   Fire,
   Footprints,
-  HandHeart,
   Leaf,
   Lightning,
 } from "phosphor-react-native";
@@ -213,8 +212,7 @@ export const useAchievements = () => {
   // --- Daily Goals Logic - Used in Eco Score Calculation ---
   const goalsLogic = useMemo(() => {
     // Helper to identify goal activities for score calc without time constraint (total completions)
-    const isGoalCategory = (cat: string) =>
-      ["plant_tree", "volunteer"].includes(cat);
+    const isGoalCategory = (cat: string) => ["plant_tree"].includes(cat);
     return { isGoalCategory };
   }, []);
 
@@ -289,7 +287,7 @@ export const useAchievements = () => {
   // Base: Streak * 5 + Badges * 10
   // Activity Bonus: +1 for normal, +2 for Daily Goals (plant_tree, volunteer)
   const activityScore = activities.reduce((sum, item) => {
-    if (["plant_tree", "volunteer"].includes(item.category)) {
+    if (["plant_tree"].includes(item.category)) {
       return sum + 2;
     }
     return sum + 1;
@@ -322,14 +320,6 @@ export const useAchievements = () => {
         isCompleted: isCompletedToday("plant_tree"),
         icon: Leaf,
         color: "#16a34a",
-      },
-      {
-        id: "daily_volunteer",
-        title: "Volunteer Work",
-        category: "volunteer",
-        isCompleted: isCompletedToday("volunteer"),
-        icon: HandHeart,
-        color: "#9333ea",
       },
     ];
   }, [activities]);
