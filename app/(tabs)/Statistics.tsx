@@ -1,5 +1,6 @@
 import CarbonFootprint from "@/components/CarbonFootprint";
 import Expenses from "@/components/Expenses";
+import { colors } from "@/constants/theme";
 import useTheme from "@/hooks/useColorScheme";
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
 import React, { useState } from "react";
@@ -8,7 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scale, verticalScale } from "react-native-size-matters";
 
 const Statistics = () => {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const { top } = useSafeAreaInsets();
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   return (
@@ -35,6 +36,10 @@ const Statistics = () => {
         values={["Carbon Footprint", "Expenses"]}
         selectedIndex={selectedIndex}
         style={{ height: verticalScale(40) }}
+        backgroundColor={isDark ? colors.neutral800 : colors.neutral200}
+        tintColor={isDark ? colors.neutral600 : colors.white}
+        fontStyle={{ color: theme.text }}
+        activeFontStyle={{ color: theme.text }}
         onChange={(event) => {
           setSelectedIndex(event.nativeEvent.selectedSegmentIndex);
         }}

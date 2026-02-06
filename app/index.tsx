@@ -13,7 +13,7 @@ export default function Index() {
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <View style={styles.animation}>
         <Image
-          source={require("../assets/images/splash.png")}
+          source={require("../assets/images/Eco-Logo.png")}
           style={styles.image}
           resizeMode="contain"
         />

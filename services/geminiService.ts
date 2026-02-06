@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const geminiCall = async (input: string) => {
-  const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+  const apiKey = "AIzaSyBwWDLCX08dvvisrqjqGsLih1fAw_EcApw";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
   try {
     const response = await axios.post(url, {

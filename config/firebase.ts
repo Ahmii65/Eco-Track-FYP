@@ -7,13 +7,13 @@ import {
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 const firebaseConfig = {
-  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
+  apiKey: "AIzaSyAnjOzchfLRuKCZ9JUxZht5HAv71w2_MAQ",
+  authDomain: "eco-track-8ba66.firebaseapp.com",
+  projectId: "eco-track-8ba66",
+  storageBucket: "eco-track-8ba66.firebasestorage.app",
+  messagingSenderId: "817082889451",
+  appId: "1:817082889451:web:a0b0bff01d3f1d8f1dfaae",
+  measurementId: "G-24Y9S5KLXL",
 };
 
 // Initialize Firebase

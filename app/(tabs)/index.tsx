@@ -7,8 +7,6 @@ import { useAuth } from "@/contexts/authContext";
 import { useAchievements } from "@/hooks/useAchievements";
 import useTheme from "@/hooks/useColorScheme";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
-import { ChatsCircleIcon } from "phosphor-react-native";
 import React, { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Animated, {
@@ -116,25 +114,6 @@ const Home = () => {
           </View>
         </ScrollView>
       </View>
-
-      {/* Floating Action Button */}
-      <AnimatedPressable
-        style={[styles.fabContainer, fabAnimatedStyle]}
-        onPressIn={onPressIn}
-        onPressOut={onPressOut}
-        onPress={() => {
-          router.push("/ChatScreen");
-        }}
-      >
-        <LinearGradient
-          colors={[colors.primary, "#0f766e"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.fab}
-        >
-          <ChatsCircleIcon color={colors.white} size={32} weight="fill" />
-        </LinearGradient>
-      </AnimatedPressable>
     </View>
   );
 };
