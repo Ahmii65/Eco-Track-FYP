@@ -32,6 +32,7 @@ const CarbonFootprint = () => {
   const [activities, setActivities] = useState<any>([]);
 
   useEffect(() => {
+    if (!user?.uid) return;
     if (filter === "Weekly") {
       getWeeklyStats();
     } else if (filter === "Monthly") {
@@ -39,7 +40,7 @@ const CarbonFootprint = () => {
     } else {
       getYearlyStats();
     }
-  }, [filter]);
+  }, [filter, user?.uid]);
 
   const getWeeklyStats = async () => {
     setchartLoading(true);

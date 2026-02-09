@@ -1,3 +1,4 @@
+import ModalKeyboardAvoidingView from "@/components/ModalKeyboardAvoidingView";
 import TouchableButton from "@/components/TouchableButton";
 import { colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/authContext";
@@ -11,9 +12,7 @@ import { TrashIcon, X } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
-  KeyboardAvoidingView,
   Modal,
-  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -130,8 +129,7 @@ const AddElectricityLogModal = ({ visible, onClose, initialData }: Props) => {
         <Pressable style={[styles.backdrop]} onPress={onClose} />
 
         {/* Bottom Sheet Content */}
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
+        <ModalKeyboardAvoidingView
           style={[
             styles.sheetContainer,
             { backgroundColor: isDark ? colors.neutral800 : colors.white },
@@ -208,7 +206,7 @@ const AddElectricityLogModal = ({ visible, onClose, initialData }: Props) => {
               </TouchableButton>
             </View>
           </ScrollView>
-        </KeyboardAvoidingView>
+        </ModalKeyboardAvoidingView>
       </View>
     </Modal>
   );

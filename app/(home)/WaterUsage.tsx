@@ -39,7 +39,10 @@ const WaterUsage = () => {
     constraints,
   );
 
-  const totalWater = logs.reduce((acc, curr) => acc + curr.liters, 0);
+  const totalWater = logs.reduce(
+    (acc, curr) => acc + (Number(curr.liters) || 0),
+    0,
+  );
 
   // Process data for Chart
   // Process data for Chart: Strickland last 7 days

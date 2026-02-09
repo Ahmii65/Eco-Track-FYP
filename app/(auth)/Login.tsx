@@ -37,9 +37,11 @@ const Login = () => {
     Keyboard.dismiss();
     setLoading(true);
     let response = await login(emailRef.current, passwordRef.current);
-    setLoading(false);
 
+    // Only turn off loading if it FAILED.
+    // If success, keep loading true until the AuthContext redirects us.
     if (!response.success) {
+      setLoading(false);
       Alert.alert("Login Error", response?.msg);
     }
   };

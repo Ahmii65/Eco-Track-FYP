@@ -16,14 +16,16 @@ const ExpenseSearch = () => {
   const { user } = useAuth();
   const { top } = useSafeAreaInsets();
   const [search, setSearch] = useState<string>("");
+  const constraints = React.useMemo(() => {
+    if (!user?.uid) return null;
+    return [where("uid", "==", user.uid), orderBy("date", "desc")];
+  }, [user?.uid]);
+
   const {
     data: SearchTransactions,
     loading: transactionLoading,
     error: transactionError,
-  } = useFetch<TransactionType>("transactions", [
-    where("uid", "==", user?.uid),
-    orderBy("date", "desc"),
-  ]);
+  } = useFetch<TransactionType>("transactions", constraints);
 
   const filteredTransaction = SearchTransactions.filter((item) => {
     if (search.length > 1) {
@@ -86,7 +88,7 @@ const ExpenseSearch = () => {
         {filteredTransaction.map((item: any, index: number) => (
           <TransactionListItem
             key={item.id || index}
-            item={item} 
+            item={item}
             index={index}
             handleClick={() => {}}
           />

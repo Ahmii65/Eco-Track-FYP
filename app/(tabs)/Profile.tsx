@@ -12,6 +12,7 @@ import {
   Info,
   Palette,
   SignOut,
+  Trash,
   User,
 } from "phosphor-react-native";
 import React, { useState } from "react";
@@ -22,8 +23,9 @@ import { scale, verticalScale } from "react-native-size-matters";
 const Profile = () => {
   const { theme, isDark } = useTheme();
   const { top } = useSafeAreaInsets();
-  const { user } = useAuth();
-  const [loading, setloading] = useState<boolean>(false);
+  const { user, deleteDataAndAccount } = useAuth();
+  const [signOutLoading, setSignOutLoading] = useState<boolean>(false);
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   const handleSignOut = () => {
     Alert.alert(
@@ -38,9 +40,9 @@ const Profile = () => {
           text: "Confirm",
           style: "destructive",
           onPress: async () => {
-            setloading(true);
+            setSignOutLoading(true);
             await signOut(auth);
-            setloading(false);
+            setSignOutLoading(false);
           },
         },
       ],
@@ -171,12 +173,53 @@ const Profile = () => {
       {/* Spacer to push content to bottom */}
       <View style={{ flex: 1 }} />
 
-      {/* Logout Button */}
-      <View style={styles.logoutSection}>
-        <TouchableButton loading={loading} onPress={handleSignOut}>
+      {/* Footer Actions */}
+      <View style={{ gap: verticalScale(10), marginBottom: verticalScale(20) }}>
+        {/* Logout Button */}
+        <TouchableButton loading={signOutLoading} onPress={handleSignOut}>
           <View style={styles.logoutButtonContent}>
             <SignOut size={scale(16)} color={colors.neutral900} weight="bold" />
             <Text style={styles.logoutButtonText}>Sign Out</Text>
+          </View>
+        </TouchableButton>
+
+        {/* Delete Account Button */}
+        <TouchableButton
+          loading={deleteLoading}
+          style={{ backgroundColor: "#FEE2E2" }}
+          onPress={() => {
+            Alert.alert(
+              "Delete Account",
+              "Are you sure? This action is irreversible and will delete all your data.",
+              [
+                {
+                  text: "Cancel",
+                  style: "cancel",
+                },
+                {
+                  text: "Delete",
+                  style: "destructive",
+                  onPress: async () => {
+                    setDeleteLoading(true);
+                    const res = await deleteDataAndAccount();
+                    if (res && !res.success) {
+                      Alert.alert(
+                        "Error",
+                        res.msg || "Failed to delete account",
+                      );
+                      setDeleteLoading(false);
+                    }
+                  },
+                },
+              ],
+            );
+          }}
+        >
+          <View style={styles.logoutButtonContent}>
+            <Trash size={scale(16)} color="#EF4444" weight="bold" />
+            <Text style={[styles.logoutButtonText, { color: "#EF4444" }]}>
+              Delete Account
+            </Text>
           </View>
         </TouchableButton>
       </View>
@@ -251,10 +294,6 @@ const styles = StyleSheet.create({
   menuItemText: {
     fontSize: verticalScale(14),
     fontWeight: "500",
-  },
-  logoutSection: {
-    marginTop: verticalScale(8),
-    marginBottom: verticalScale(10),
   },
   logoutButtonContent: {
     flexDirection: "row",

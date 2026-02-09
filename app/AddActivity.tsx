@@ -192,7 +192,6 @@ const AddActivity = () => {
         {
           backgroundColor: theme.background,
           paddingTop: top + 5,
-          paddingBottom: bottom,
         },
       ]}
     >
@@ -216,6 +215,7 @@ const AddActivity = () => {
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
         <ScrollView
+          style={{ flex: 1 }}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
@@ -317,36 +317,34 @@ const AddActivity = () => {
             style={{
               paddingHorizontal: scale(20),
               paddingTop: verticalScale(10),
-              paddingBottom: verticalScale(10),
+              paddingBottom: bottom + verticalScale(10),
               backgroundColor: theme.background, // Match background to cover scroll content
               borderTopWidth: 1,
               borderTopColor: isDark ? colors.neutral800 : colors.neutral200,
+              flexDirection: "row",
             }}
           >
-            <View style={{ flexDirection: "row" }}>
-              {isUpdate && (
-                <TouchableButton
-                  style={{
-                    backgroundColor: colors.rose,
-                    marginRight: 10,
-                    width: 50,
-                  }}
-                  onPress={handleDelete}
-                  loading={deleteLoading}
-                >
-                  <Trash color="white" />
-                </TouchableButton>
-              )}
+            {isUpdate && (
               <TouchableButton
-                onPress={onSubmit}
-                loading={loading}
-                style={{ flex: 1 }}
+                style={{
+                  backgroundColor: colors.rose,
+                  marginRight: scale(8),
+                }}
+                onPress={handleDelete}
+                loading={deleteLoading}
               >
-                <Text style={styles.btnText}>
-                  {isUpdate ? "Update" : "Save Activity"}
-                </Text>
+                <Trash color="white" />
               </TouchableButton>
-            </View>
+            )}
+            <TouchableButton
+              onPress={onSubmit}
+              loading={loading}
+              style={{ flex: 1 }}
+            >
+              <Text style={styles.btnText}>
+                {isUpdate ? "Update" : "Save Activity"}
+              </Text>
+            </TouchableButton>
           </View>
         )}
       </KeyboardAvoidingView>

@@ -24,17 +24,19 @@ const Wallet = () => {
   const { user } = useAuth();
   const { theme, isDark } = useTheme();
   const { top } = useSafeAreaInsets();
+  const constraints = React.useMemo(() => {
+    if (!user?.uid) return null;
+    return [where("uid", "==", user.uid), orderBy("created", "desc")];
+  }, [user?.uid]);
+
   const {
     data: wallets,
     loading,
     error,
-  } = useFetch<WalletType>("wallets", [
-    where("uid", "==", user?.uid),
-    orderBy("created", "desc"),
-  ]);
+  } = useFetch<WalletType>("wallets", constraints);
   const getUpdatedBalance = () =>
     wallets.reduce((total, item) => {
-      total = total + (item?.amount || 0);
+      total = total + (Number(item?.amount) || 0);
       return total;
     }, 0);
 

@@ -2,12 +2,23 @@ import { auth, fireStore } from "@/config/firebase";
 import { router } from "expo-router";
 import {
   createUserWithEmailAndPassword,
+  deleteUser,
   onAuthStateChanged,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { AuthContextType, Message, UserType } from "../types";
+import { AuthContextType, Message, ResponseType, UserType } from "../types";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -22,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         if (initializing) {
-          updateUserData(firebaseUser.uid); // ensure user state is set before navigating
+          await updateUserData(firebaseUser.uid); // ensure user state is set before navigating
 
           router.replace("/(tabs)");
         }
@@ -64,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       let response = await createUserWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       await setDoc(doc(fireStore, "users", response?.user?.uid), {
         name,
@@ -103,11 +114,83 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           email: data?.email || null,
           name: data?.name || null,
           image: data?.image || null,
+          budget: data?.budget || 0,
+          budgetSetDate: data?.budgetSetDate || null,
         };
         setUser(userData);
       }
     } catch (error: any) {
       let msg = error.message;
+    }
+  };
+
+  const deleteDataAndAccount = async () => {
+    try {
+      if (!auth.currentUser)
+        return { success: false, msg: "No user logged in" };
+      const uid = auth.currentUser.uid;
+
+      // 1. Delete all Firestore Data
+      const collectionsToDelete = [
+        "wallets",
+        "carbon_activities",
+        "transactions",
+        "electricity_logs",
+        "water_logs",
+      ];
+
+      for (const colName of collectionsToDelete) {
+        try {
+          const q = query(
+            collection(fireStore, colName),
+            where("uid", "==", uid),
+          );
+          const snapshot = await getDocs(q);
+
+          if (!snapshot.empty) {
+            const batchPromises = snapshot.docs.map((docSnap) =>
+              deleteDoc(docSnap.ref),
+            );
+            await Promise.all(batchPromises);
+          }
+        } catch (colError: any) {
+          console.error(`Failed to delete items in ${colName}:`, colError);
+        }
+      }
+
+      // 2. Delete User Tips Doc
+      await deleteDoc(doc(fireStore, "user_tips", uid));
+
+      // 2. Delete User Profile Doc
+      await deleteDoc(doc(fireStore, "users", uid));
+
+      // 3. Delete Auth Account
+      await deleteUser(auth.currentUser);
+
+      return { success: true };
+    } catch (error: any) {
+      console.error("Error deleting account:", error);
+      let msg = error.message;
+      if (error.code === "auth/requires-recent-login") {
+        msg =
+          "For security reasons, please sign out and sign back in before deleting your account.";
+      }
+      return { success: false, msg };
+    }
+  };
+
+  const updateBudget = async (budget: number): Promise<ResponseType> => {
+    try {
+      if (!user?.uid) return { success: false, msg: "User not found" };
+      const budgetSetDate = new Date();
+      await updateDoc(doc(fireStore, "users", user.uid), {
+        budget,
+        budgetSetDate,
+      });
+      setUser((prev) => (prev ? { ...prev, budget, budgetSetDate } : null));
+      return { success: true };
+    } catch (e: any) {
+      return { success: false, msg: e.message };
     }
   };
 
@@ -117,6 +200,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     login,
     register,
     updateUserData,
+    updateBudget,
+    deleteDataAndAccount,
     messages,
     setMessages,
   };

@@ -171,6 +171,9 @@ export const getWeeklyCarbonData = async (uid: string) => {
 
     querySnapshot.forEach((doc) => {
       const activity = doc.data() as CarbonActivityType;
+      // Filter out plant_tree activities
+      if (activity.category === "plant_tree") return;
+
       activity.id = doc.id;
       activities.push(activity);
 
@@ -236,6 +239,8 @@ export const getMonthlyCarbonData = async (uid: string) => {
 
     querySnapshot.forEach((doc) => {
       const activity = doc.data() as CarbonActivityType;
+      if (activity.category === "plant_tree") return;
+
       activity.id = doc.id;
       activities.push(activity);
 
@@ -301,6 +306,8 @@ export const getYearlyCarbonData = async (uid: string) => {
 
     querySnapshot.forEach((doc) => {
       const activity = doc.data() as CarbonActivityType;
+      if (activity.category === "plant_tree") return;
+
       activity.id = doc.id;
       activities.push(activity);
 

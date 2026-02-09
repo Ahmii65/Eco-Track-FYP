@@ -60,14 +60,17 @@ const AddTransaction = () => {
   const [showDatePicker, setshowDatePicker] = useState<boolean>(false);
   const initialTransactionRef = useRef<string>("");
 
+  /* Safe constraints for wallets */
+  const constraints = React.useMemo(() => {
+    if (!user?.uid) return null;
+    return [where("uid", "==", user.uid), orderBy("created", "desc")];
+  }, [user?.uid]);
+
   const {
     data: wallets,
     loading: walletLoading,
     error: walletErrors,
-  } = useFetch<WalletType>("wallets", [
-    where("uid", "==", user?.uid),
-    orderBy("created", "desc"),
-  ]);
+  } = useFetch<WalletType>("wallets", constraints);
 
   const oldTransaction: ParamType = useLocalSearchParams();
   const onSubmit = async () => {

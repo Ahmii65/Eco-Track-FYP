@@ -6,11 +6,20 @@ import {
   HandHeart,
   Leaf,
   Lightning,
+  Motorcycle,
   Train,
 } from "phosphor-react-native";
 import { colors } from "./theme";
 
 export const cfpCategories = [
+  {
+    label: "Bike",
+    value: "bike",
+    factor: 0.11,
+    unit: "km",
+    icon: Motorcycle,
+    color: colors.rose,
+  },
   {
     label: "Car Travel (Petrol)",
     value: "car_petrol",
@@ -23,7 +32,7 @@ export const cfpCategories = [
     label: "Car Travel (Diesel)",
     value: "car_diesel",
     factor: 0.171,
-    unit: "km",
+    unit: "km", 
     icon: Car,
     color: colors.rose,
   },

@@ -32,6 +32,7 @@ const Expenses = () => {
   const [transactions, settransactions] = useState<any>([]);
 
   useEffect(() => {
+    if (!user?.uid) return;
     if (filter === "Weekly") {
       getWeeklyStats();
     } else if (filter === "Monthly") {
@@ -39,7 +40,7 @@ const Expenses = () => {
     } else {
       getYearlyStats();
     }
-  }, [filter]);
+  }, [filter, user?.uid]);
 
   const getWeeklyStats = async () => {
     setchartLoading(true);

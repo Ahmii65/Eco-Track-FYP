@@ -41,7 +41,7 @@ const ElectricityUsage = () => {
     constraints,
   );
 
-  const totalKwh = logs.reduce((acc, curr) => acc + curr.kwh, 0);
+  const totalKwh = logs.reduce((acc, curr) => acc + (Number(curr.kwh) || 0), 0);
 
   // Process data for Chart: Strickland last 7 days
   const chartData = useMemo(() => {

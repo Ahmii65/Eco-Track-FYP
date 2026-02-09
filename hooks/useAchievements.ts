@@ -81,7 +81,12 @@ export const useAchievements = () => {
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
 
-    // Calc Streak
+    // Helper: Valid emission activities (exclude game/reward items like plant_tree)
+    const emissionActivities = activities.filter(
+      (a) => a.category !== "plant_tree",
+    );
+
+    // Calc Streak (Keep using ALL activities, so planting a tree keeps streak alive)
     // Simple logic: consecutive days with at least one activity
     // Sort unique dates descending
     const dates = Array.from(
@@ -119,8 +124,8 @@ export const useAchievements = () => {
       }
     }
 
-    // Calc Totals
-    const totalImpact = activities.reduce(
+    // Calc Totals (Use emissionActivities only)
+    const totalImpact = emissionActivities.reduce(
       (sum, item) => sum + (item.impact || 0),
       0,
     );
@@ -132,10 +137,10 @@ export const useAchievements = () => {
       ["bus", "train"].includes(a.category),
     ).length;
 
-    // "Low Carbon Week": Check last 7 days impact
+    // "Low Carbon Week": Check last 7 days impact (Use emissionActivities)
     const last7Days = new Date();
     last7Days.setDate(today.getDate() - 7);
-    const last7DaysImpact = activities
+    const last7DaysImpact = emissionActivities
       .filter((a) => {
         const ad = a.date ? (a.date as Timestamp).toDate() : new Date();
         return ad >= last7Days;
@@ -151,7 +156,7 @@ export const useAchievements = () => {
       d.setDate(today.getDate() - i);
       d.setHours(0, 0, 0, 0);
 
-      const dailyImpact = activities
+      const dailyImpact = emissionActivities
         .filter((a) => {
           const ad = a.date ? (a.date as Timestamp).toDate() : new Date();
           ad.setHours(0, 0, 0, 0);
@@ -173,8 +178,8 @@ export const useAchievements = () => {
       }
     }
 
-    // --- Current Month Calculations ---
-    const currentMonthImpact = activities
+    // --- Current Month Calculations (Use emissionActivities) ---
+    const currentMonthImpact = emissionActivities
       .filter((a) => {
         const d = a.date ? (a.date as Timestamp).toDate() : new Date();
         return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
@@ -295,7 +300,7 @@ export const useAchievements = () => {
 
   const ecoScore = Math.min(
     100,
-    stats.streak * 5 + unlockedCount * 10 + activityScore,
+    stats.streak * 1 + unlockedCount * 10 + activityScore,
   );
 
   // --- Daily Goals Logic for UI ---

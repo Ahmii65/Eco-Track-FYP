@@ -37,7 +37,15 @@ const CarbonFootPrint = () => {
     error,
   } = useFetch<CarbonActivityType>("carbon_activities", constraints);
 
-  const totalEmissions = activities.reduce((acc, curr) => acc + curr.impact, 0);
+  // Filter out "plant_tree" (and "volunteer" if needed) so they don't appear in the standard CFP list
+  const filteredActivities = useMemo(() => {
+    return activities.filter((a) => a.category !== "plant_tree");
+  }, [activities]);
+
+  const totalEmissions = filteredActivities.reduce(
+    (acc, curr) => acc + (Number(curr.impact) || 0),
+    0,
+  );
 
   const handleCallback = (item: CarbonActivityType) => {
     router.push({
@@ -89,7 +97,7 @@ const CarbonFootPrint = () => {
         </View>
 
         <FlashList
-          data={activities}
+          data={filteredActivities}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: verticalScale(100) }}
           renderItem={({ item, index }) => (

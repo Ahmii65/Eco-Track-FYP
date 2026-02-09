@@ -44,13 +44,12 @@ const Register = () => {
     let response = await register(
       emailRef.current,
       passwordRef.current,
-      nameRef.current
+      nameRef.current,
     );
 
-    setLoading(false);
     if (!response.success) {
+      setLoading(false);
       Alert.alert("Registration Error", response?.msg);
-      // console.log(response?.msg);
     }
   };
 

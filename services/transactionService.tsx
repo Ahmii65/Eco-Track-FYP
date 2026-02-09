@@ -13,6 +13,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   orderBy,
   query,
   Timestamp,
@@ -368,4 +369,97 @@ export const getYearlyData = async (uid: string) => {
     console.log("Error fetching Yearly data: ", error);
     return { success: false, msg: error.message };
   }
+};
+
+export const getCurrentMonthExpenses = async (uid: string) => {
+  try {
+    const db = fireStore;
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    const q = query(
+      collection(db, "transactions"),
+      where("uid", "==", uid),
+      where("type", "==", "expense"),
+      where("date", ">=", Timestamp.fromDate(startOfMonth)),
+      where("date", "<=", Timestamp.fromDate(endOfMonth)),
+    );
+
+    const querySnapshot = await getDocs(q);
+    let totalExpense = 0;
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      totalExpense += Number(data.amount) || 0;
+    });
+
+    return { success: true, data: totalExpense };
+  } catch (error: any) {
+    console.log("Error fetching current month expenses: ", error);
+    return { success: false, msg: error.message };
+  }
+};
+
+export const listenToMonthlyExpenses = (
+  uid: string,
+  budgetSetDate: any,
+  onUpdate: (data: { total: number; budgetUsed: number }) => void,
+) => {
+  const db = fireStore;
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+  let budgetDate = startOfMonth;
+  if (budgetSetDate) {
+    budgetDate = budgetSetDate.toDate
+      ? budgetSetDate.toDate()
+      : new Date(budgetSetDate);
+  }
+
+  const q = query(
+    collection(db, "transactions"),
+    where("uid", "==", uid),
+    where("type", "==", "expense"),
+    where("date", ">=", Timestamp.fromDate(startOfMonth)),
+    where("date", "<=", Timestamp.fromDate(endOfMonth)),
+  );
+
+  return onSnapshot(q, (snapshot) => {
+    let totalExpense = 0;
+    let budgetUsed = 0;
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const amount = Number(data.amount) || 0;
+      totalExpense += amount;
+
+      // Check if transaction date is after budget set date
+      const transactionDate = data.date.toDate();
+      // If budgetDate is within this month and valid, check against it
+      // If budgetSetDate is older than this month, budgetDate passed to this logic might be startOfMonth (if we didn't handle that case well)
+      // Actually, let's keep it simple:
+      // If budgetSetDate is defined and valid:
+      if (budgetSetDate) {
+        // If transaction happened AFTER the budget was set, count it.
+        // We also only care if the budget was set THIS month.
+        // If budget set LAST month, then budgetDate < startOfMonth, so all transactions this month count.
+        if (transactionDate >= budgetDate) {
+          budgetUsed += amount;
+        }
+      } else {
+        // No budget date set? Then everything counts? Or nothing?
+        // Usually everything counts if no specific start date is tracked, but here user wants "start from now".
+        // If no date is set, maybe we assume standard behavior (everything counts).
+        budgetUsed += amount;
+      }
+    });
+
+    // Correction: If budget was set in a previous month, budgetDate < startOfMonth.
+    // transactionDate (this month) will always be > budgetDate. So all expenses count. Correct.
+    // If budget was set TODAY, budgetDate > startOfMonth.
+    // Only transactions > today count. Correct.
+
+    onUpdate({ total: totalExpense, budgetUsed });
+  });
 };

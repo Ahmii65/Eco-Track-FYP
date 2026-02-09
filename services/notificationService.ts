@@ -1,5 +1,7 @@
 import * as Notifications from "expo-notifications";
+import { Platform } from "react-native";
 
+/* 🔹 Notification handler (this part was already OK) */
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -10,8 +12,27 @@ Notifications.setNotificationHandler({
   }),
 });
 
+/* 🔥 REQUIRED: Create Android notification channel */
+const createNotificationChannel = async () => {
+  if (Platform.OS === "android") {
+    await Notifications.setNotificationChannelAsync("eco-track", {
+      name: "Eco Track",
+      importance: Notifications.AndroidImportance.HIGH,
+      sound: "default",
+      vibrationPattern: [0, 250, 250, 250],
+      enableVibrate: true,
+      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+    });
+  }
+};
+
+/* 🔹 Called on app start */
 export const processNotifications = async () => {
+  // 🔥 MUST be first
+  await createNotificationChannel();
+
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
+
   let finalStatus = existingStatus;
 
   if (existingStatus !== "granted") {
@@ -20,23 +41,22 @@ export const processNotifications = async () => {
   }
 
   if (finalStatus !== "granted") {
-    console.log("Failed to get push token for push notification!");
+    console.log("Notification permission denied");
     return;
   }
 
-  // Schedule daily reminder if permissions granted
   await scheduleDailyReminder();
 };
 
+/* 🔹 Daily reminder */
 export const scheduleDailyReminder = async () => {
-  // Cancel all existing to avoid duplicates (safeguard)
   await Notifications.cancelAllScheduledNotificationsAsync();
 
   await Notifications.scheduleNotificationAsync({
     content: {
       title: "Eco Track Reminder 🌿",
       body: "Don't forget to log your daily activities and check your carbon footprint!",
-      sound: true,
+      sound: "default",
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,

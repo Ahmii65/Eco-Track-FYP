@@ -68,22 +68,6 @@ export type TransactionItemProps = {
   handleClick: Function;
 };
 
-// export interface InputProps extends TextInputProps {
-//   icon?: React.ReactNode;
-//   containerStyle?: ViewStyle;
-//   inputStyle?: TextStyle;
-//   inputRef?: React.RefObject<TextInput>;
-//   //   label?: string;
-//   //   error?: string;
-// }
-
-// export interface CustomButtonProps extends TouchableOpacityProps {
-//   style?: ViewStyle;
-//   onPress?: () => void;
-//   loading?: boolean;
-//   children: React.ReactNode;
-// }
-
 export type ImageUploadProps = {
   file?: any;
   onSelect: (file: any) => void;
@@ -98,6 +82,8 @@ export type UserType = {
   email?: string | null;
   name: string | null;
   image?: any;
+  budget?: number;
+  budgetSetDate?: any;
 } | null;
 
 export type UserDataType = {
@@ -117,11 +103,11 @@ export type AuthContextType = {
     password: string,
     name: string,
   ) => Promise<{ success: boolean; msg?: string }>;
-  updateUserData: (userId: string) => Promise<void>;
+  updateUserData: (uid: string) => void;
+  updateBudget: (budget: number) => Promise<ResponseType>;
+  deleteDataAndAccount: () => Promise<{ success: boolean; msg?: string }>;
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-  // logout: () => Promise<void>;
-  // logout: () => Promise<{ success: boolean; msg?: string }>;
 };
 
 export type ResponseType = {
