@@ -93,91 +93,110 @@ const AddWallet = () => {
   return (
     <View
       style={[
-        styles.main,
+        styles.container,
         {
           backgroundColor: theme.background,
-          paddingTop: top + 5,
+          paddingTop: top,
+          paddingBottom: bottom,
         },
       ]}
     >
-      <View style={{ paddingHorizontal: scale(20), gap: verticalScale(12) }}>
-        <View style={styles.header}>
-          <BackButton />
+      <View style={styles.header}>
+        <BackButton />
+        <Text style={[styles.headerTitle, { color: theme.text }]}>
+          {oldWallet?.id ? "Edit Wallet" : "Add Wallet"}
+        </Text>
+        <View style={styles.placeholder} />
+      </View>
+
+      <View style={styles.content}>
+        <View style={styles.inputGroup}>
+          <Text style={[styles.label, { color: theme.text }]}>Wallet Name</Text>
+          <TextInput
+            placeholder="e.g. Primary Spending"
+            placeholderTextColor={
+              isDark ? colors.neutral500 : colors.neutral400
+            }
+            value={wallet.name}
+            onChangeText={(value) => setWallet({ ...wallet, name: value })}
+            style={[
+              styles.input,
+              {
+                backgroundColor: isDark ? colors.neutral800 : colors.neutral100,
+                color: theme.text,
+                borderColor: isDark ? colors.neutral700 : colors.neutral200,
+              },
+            ]}
+          />
+        </View>
+
+        <View style={styles.inputGroup}>
+          <Text style={[styles.label, { color: theme.text }]}>Wallet Icon</Text>
           <View
-            style={{
-              alignItems: "center",
-              flex: 1,
-              marginRight: scale(35),
-            }}
+            style={[
+              styles.imagePickerContainer,
+              {
+                backgroundColor: isDark ? colors.neutral800 : colors.neutral100,
+                borderColor: isDark ? colors.neutral700 : colors.neutral200,
+              },
+            ]}
           >
-            <Text style={[styles.headerText, { color: theme.text }]}>
-              {oldWallet?.id ? "Update Wallet" : "New Wallet"}
-            </Text>
+            <ImageIcon
+              placeholder="Tap to upload icon"
+              file={wallet.image}
+              onSelect={(file) => setWallet({ ...wallet, image: file })}
+              onClear={() => setWallet({ ...wallet, image: null })}
+              containerStyle={{
+                backgroundColor: "transparent",
+                height: "100%",
+                width: "100%",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: verticalScale(10),
+              }}
+              imageStyle={{
+                height: scale(120),
+                width: scale(120),
+                borderRadius: verticalScale(20),
+              }}
+            />
           </View>
         </View>
-        <Text style={[styles.date, { color: theme.text }]}>Wallet Name</Text>
-        <TextInput
-          placeholder="Enter Name"
-          placeholderTextColor={theme.text}
-          value={wallet.name}
-          onChangeText={(value) => {
-            setWallet({ ...wallet, name: value });
-          }}
-          style={{
-            padding: verticalScale(16),
-            borderWidth: 1,
-            borderColor: theme.text,
-            borderRadius: verticalScale(12),
-            color: theme.text,
-          }}
-        />
-        <Text style={[styles.date, { color: theme.text }]}>Wallet Icon</Text>
-        <ImageIcon
-          placeholder="Upload Image"
-          file={wallet.image}
-          onSelect={(file) => {
-            setWallet({ ...wallet, image: file });
-          }}
-          onClear={() => {
-            setWallet({ ...wallet, image: null });
-          }}
-        />
       </View>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "flex-end",
-          paddingBottom: bottom + 8,
-        }}
-      >
-        <View
-          style={{
-            borderTopWidth: 1,
-            borderTopColor: isDark ? colors.neutral700 : colors.neutral200,
-            paddingHorizontal: scale(18),
-            paddingTop: verticalScale(10),
-            flexDirection: "row",
-          }}
-        >
-          {oldWallet?.id && (
-            <TouchableButton
-              style={{ marginRight: scale(8), backgroundColor: colors.rose }}
-              onPress={handleDeleteWallet}
-              loading={Deleteloading}
-            >
-              <TrashIcon color={"white"} />
-            </TouchableButton>
-          )}
+
+      <View style={styles.footer}>
+        {oldWallet?.id && (
           <TouchableButton
-            loading={loading}
-            onPress={onSubmit}
-            style={{ flex: 1 }}
+            style={[
+              styles.deleteButton,
+              {
+                backgroundColor: isDark ? colors.neutral800 : colors.neutral100,
+              },
+            ]}
+            onPress={handleDeleteWallet}
+            loading={Deleteloading}
           >
-            <Text style={{ fontWeight: "700", fontSize: verticalScale(16) }}>
-              {oldWallet.id ? "Update Wallet" : "Add Wallet"}
+            <TrashIcon
+              size={verticalScale(24)}
+              color={colors.rose}
+              weight="bold"
+            />
+            <Text style={[styles.deleteButtonText, { color: colors.rose }]}>
+              Delete Wallet
             </Text>
           </TouchableButton>
-        </View>
+        )}
+
+        <TouchableButton
+          loading={loading}
+          onPress={onSubmit}
+          style={styles.submitButton}
+        >
+          <Text style={styles.submitButtonText}>
+            {oldWallet?.id ? "Update Wallet" : "Create Wallet"}
+          </Text>
+        </TouchableButton>
       </View>
     </View>
   );
@@ -186,16 +205,79 @@ const AddWallet = () => {
 export default AddWallet;
 
 const styles = StyleSheet.create({
-  main: { flex: 1 },
+  container: {
+    flex: 1,
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: verticalScale(16),
+    justifyContent: "space-between",
+    paddingHorizontal: scale(20),
+    paddingVertical: verticalScale(10),
   },
-  headerText: {
+  headerTitle: {
+    fontSize: verticalScale(20),
+    fontWeight: "700",
+    letterSpacing: 0.5,
+  },
+  placeholder: {
+    width: scale(40), // Matches BackButton width roughly to center title
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: scale(24),
+    paddingTop: verticalScale(20),
+    gap: verticalScale(24),
+  },
+  inputGroup: {
+    gap: verticalScale(10),
+  },
+  label: {
+    fontSize: verticalScale(16),
+    fontWeight: "600",
+    letterSpacing: 0.3,
+  },
+  input: {
+    padding: verticalScale(16),
+    borderRadius: verticalScale(16),
+    borderWidth: 1,
+    fontSize: verticalScale(16),
+  },
+  imagePickerContainer: {
+    height: verticalScale(160),
+    borderRadius: verticalScale(20),
+    borderWidth: 1,
+    borderStyle: "dashed",
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  footer: {
+    paddingHorizontal: scale(24),
+    paddingTop: verticalScale(20),
+    gap: verticalScale(12),
+  },
+  submitButton: {
+    backgroundColor: colors.primary,
+    borderRadius: verticalScale(16),
+    height: verticalScale(56),
+  },
+  submitButtonText: {
+    color: colors.neutral900,
     fontSize: verticalScale(18),
     fontWeight: "700",
-    letterSpacing: verticalScale(0.5),
+    letterSpacing: 0.5,
   },
-  date: { fontWeight: 500, fontSize: verticalScale(18) },
+  deleteButton: {
+    flexDirection: "row",
+    gap: scale(8),
+    height: verticalScale(56),
+    borderRadius: verticalScale(16),
+    borderWidth: 1,
+    borderColor: "transparent", // Can change if needed
+  },
+  deleteButtonText: {
+    fontSize: verticalScale(16),
+    fontWeight: "600",
+  },
 });

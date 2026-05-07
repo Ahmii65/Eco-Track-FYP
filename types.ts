@@ -105,7 +105,11 @@ export type AuthContextType = {
   ) => Promise<{ success: boolean; msg?: string }>;
   updateUserData: (uid: string) => void;
   updateBudget: (budget: number) => Promise<ResponseType>;
-  deleteDataAndAccount: () => Promise<{ success: boolean; msg?: string }>;
+  deleteDataAndAccount: () => Promise<{
+    success: boolean;
+    msg?: string;
+    errorCode?: string;
+  }>;
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
 };
@@ -114,6 +118,7 @@ export type ResponseType = {
   success: boolean;
   data?: any;
   msg?: string;
+  errorCode?: string;
 };
 
 export type WalletType = {

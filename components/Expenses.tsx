@@ -122,7 +122,6 @@ const Expenses = () => {
               barWidth={scale(8)}
               roundedTop
               spacing={filter === "Weekly" ? scale(25) : scale(35)}
-              yAxisLabelPrefix="₹"
               yAxisThickness={0}
               xAxisThickness={0}
               yAxisLabelWidth={scale(30)}

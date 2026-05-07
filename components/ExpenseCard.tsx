@@ -1,12 +1,7 @@
 import { colors } from "@/constants/theme";
 import useTheme from "@/hooks/useColorScheme";
 import { LinearGradient } from "expo-linear-gradient";
-import {
-  ArrowDown,
-  ArrowUp,
-  DotsThreeIcon,
-  Warning,
-} from "phosphor-react-native";
+import { ArrowDown, ArrowUp, Warning } from "phosphor-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { scale, verticalScale } from "react-native-size-matters";
@@ -80,7 +75,6 @@ const ExpenseCard = ({
           >
             Total Balance
           </Text>
-          <DotsThreeIcon size={verticalScale(26)} color={theme.text} />
         </View>
         <Text
           style={{

@@ -1,3 +1,4 @@
+import SkeletonItem from "@/components/SkeletonItem";
 import TouchableButton from "@/components/TouchableButton";
 import { auth } from "@/config/firebase";
 import { colors } from "@/constants/theme";
@@ -26,6 +27,8 @@ const Profile = () => {
   const { user, deleteDataAndAccount } = useAuth();
   const [signOutLoading, setSignOutLoading] = useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+
+  const isLoading = !user || !user.name;
 
   const handleSignOut = () => {
     Alert.alert(
@@ -107,14 +110,30 @@ const Profile = () => {
             },
           ]}
         >
-          <Image
-            source={getProfileImage(user?.image)}
-            contentFit="cover"
-            transition={100}
-            style={styles.profileImage}
-          />
+          {isLoading ? (
+            <SkeletonItem
+              width={scale(106)}
+              height={scale(106)}
+              borderRadius={scale(53)}
+            />
+          ) : (
+            <Image
+              source={getProfileImage(user?.image)}
+              contentFit="cover"
+              transition={100}
+              style={styles.profileImage}
+            />
+          )}
         </View>
-        <Text style={[styles.text, { color: theme.text }]}>{user?.name}</Text>
+        {isLoading ? (
+          <SkeletonItem
+            width={scale(150)}
+            height={verticalScale(24)}
+            style={{ alignSelf: "center", marginTop: verticalScale(4) }}
+          />
+        ) : (
+          <Text style={[styles.text, { color: theme.text }]}>{user?.name}</Text>
+        )}
         {/* <Text style={[styles.text1, { color: theme.text }]}>{user?.email}</Text> */}
       </View>
 
@@ -203,10 +222,21 @@ const Profile = () => {
                     setDeleteLoading(true);
                     const res = await deleteDataAndAccount();
                     if (res && !res.success) {
-                      Alert.alert(
-                        "Error",
-                        res.msg || "Failed to delete account",
-                      );
+                      if (res.errorCode === "auth/requires-recent-login") {
+                        Alert.alert("Security Update", res.msg, [
+                          { text: "Cancel", style: "cancel" },
+                          {
+                            text: "Log Out",
+                            onPress: handleSignOut,
+                            style: "destructive",
+                          },
+                        ]);
+                      } else {
+                        Alert.alert(
+                          "Error",
+                          res.msg || "Failed to delete account",
+                        );
+                      }
                       setDeleteLoading(false);
                     }
                   },

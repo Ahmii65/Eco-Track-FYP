@@ -31,20 +31,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
+      // setUser(firebaseUser)
       if (firebaseUser) {
-        if (initializing) {
-          await updateUserData(firebaseUser.uid); // ensure user state is set before navigating
-
-          router.replace("/(tabs)");
-        }
+        updateUserData(firebaseUser.uid);
+        router.replace("/(tabs)");
       } else {
         setUser(null);
-        if (initializing) {
-          router.replace("/(auth)/welcome");
-        }
+        router.replace("/(auth)/welcome");
       }
-      setInitializing(false);
     });
+
     return () => unsub();
   }, []);
 
@@ -107,20 +103,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const docRef = doc(fireStore, "users", uid);
       const docSnap = await getDoc(docRef);
+
       if (docSnap.exists()) {
         const data = docSnap.data();
-        const userData: UserType = {
-          uid: data?.uid || null,
-          email: data?.email || null,
-          name: data?.name || null,
-          image: data?.image || null,
-          budget: data?.budget || 0,
-          budgetSetDate: data?.budgetSetDate || null,
-        };
-        setUser(userData);
+
+        setUser({
+          uid: data?.uid ?? null,
+          email: data?.email ?? null,
+          name: data?.name ?? null,
+          image: data?.image ?? null,
+          budget: data?.budget ?? 0,
+          budgetSetDate: data?.budgetSetDate ?? null,
+        });
+      } else {
+        console.log("User document does not exist");
+        setUser(null);
       }
     } catch (error: any) {
-      let msg = error.message;
+      console.log("Firestore error:", error.message);
     }
   };
 
@@ -175,7 +175,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         msg =
           "For security reasons, please sign out and sign back in before deleting your account.";
       }
-      return { success: false, msg };
+      return { success: false, msg, errorCode: error.code };
     }
   };
 

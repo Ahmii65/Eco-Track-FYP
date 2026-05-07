@@ -15,11 +15,13 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import Animated, { Easing, FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import { scale, verticalScale } from "react-native-size-matters";
 
 const Login = () => {
   const { top } = useSafeAreaInsets();
@@ -38,140 +40,187 @@ const Login = () => {
     setLoading(true);
     let response = await login(emailRef.current, passwordRef.current);
 
-    // Only turn off loading if it FAILED.
-    // If success, keep loading true until the AuthContext redirects us.
     if (!response.success) {
       setLoading(false);
       Alert.alert("Login Error", response?.msg);
     }
   };
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={[styles.Container, { backgroundColor: theme.background }]}>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
         <KeyboardAvoidingView
-          style={{ flex: 1, backgroundColor: theme.background }}
+          style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
         >
           <ScrollView
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
-            style={{ backgroundColor: theme.background }}
           >
-            <View
-              style={{
-                paddingHorizontal: scale(20),
-                gap: verticalScale(20),
-                paddingTop: top + 5,
-              }}
-            >
-              <BackButton />
-              <View style={{ marginTop: verticalScale(20), gap: 5 }}>
-                <Text style={[styles.text, { color: theme.text }]}>Hey,</Text>
-                <Text style={[styles.text, { color: theme.text }]}>
-                  Welcome Back
-                </Text>
-                <Text
-                  style={{
-                    color: theme.text,
-                    fontSize: verticalScale(16),
-                    fontWeight: "500",
-                    paddingTop: verticalScale(5),
-                  }}
-                >
-                  Login now to track all your Activities
-                </Text>
-              </View>
-              {/* Form */}
+            <View style={[styles.main, { paddingTop: top + 10 }]}>
+              {/* Header Section */}
+              <Animated.View
+                entering={FadeInDown.delay(200)
+                  .duration(800)
+                  .easing(Easing.out(Easing.quad))}
+                style={styles.header}
+              >
+                <BackButton />
+                <View style={styles.titleContainer}>
+                  <Text style={[styles.welcomeText, { color: theme.text }]}>
+                    Hey,
+                  </Text>
+                  <Text style={[styles.welcomeText, { color: theme.text }]}>
+                    Welcome Back
+                  </Text>
+                </View>
+              </Animated.View>
+
+              {/* Form Section */}
               <View style={styles.form}>
-                {/* Input */}
-                <View
+                {/* Email Input */}
+                <Animated.View
+                  entering={FadeInDown.delay(400)
+                    .duration(800)
+                    .easing(Easing.out(Easing.quad))}
                   style={[
-                    styles.inputView,
-                    { borderColor: isDark ? colors.neutral100 : "black" },
+                    styles.inputContainer,
+                    {
+                      backgroundColor: isDark
+                        ? colors.neutral800
+                        : colors.white,
+                      borderColor: isDark
+                        ? colors.neutral700
+                        : colors.neutral400,
+                      borderWidth: 1,
+                      shadowColor: isDark ? "transparent" : "#000",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: isDark ? 0 : 0.05,
+                      shadowRadius: 6,
+                      elevation: isDark ? 0 : 2,
+                    },
                   ]}
                 >
-                  <View
-                    style={{
-                      justifyContent: "center",
-                      paddingLeft: moderateScale(10),
-                    }}
-                  >
-                    <At size={verticalScale(24)} color={theme.text} />
+                  <View style={styles.iconContainer}>
+                    <At
+                      size={verticalScale(24)}
+                      color={isDark ? colors.neutral400 : colors.neutral600}
+                    />
                   </View>
                   <TextInput
                     placeholder="Enter your Email"
-                    placeholderTextColor={theme.text}
+                    placeholderTextColor={
+                      isDark ? colors.neutral500 : colors.neutral400
+                    }
                     keyboardType="email-address"
-                    style={[styles.inputStyles, { color: theme.text }]}
+                    style={[
+                      styles.input,
+                      { color: isDark ? colors.neutral300 : colors.neutral700 },
+                    ]}
                     onChangeText={(value) => (emailRef.current = value)}
                   />
-                </View>
-                {/* Input 2 */}
-                <View
+                </Animated.View>
+
+                {/* Password Input */}
+                <Animated.View
+                  entering={FadeInDown.delay(600)
+                    .duration(800)
+                    .easing(Easing.out(Easing.quad))}
                   style={[
-                    styles.inputView,
-                    { borderColor: isDark ? colors.neutral100 : "black" },
+                    styles.inputContainer,
+                    {
+                      backgroundColor: isDark
+                        ? colors.neutral800
+                        : colors.white,
+                      borderColor: isDark
+                        ? colors.neutral700
+                        : colors.neutral400,
+                      borderWidth: 1,
+                      shadowColor: isDark ? "transparent" : "#000",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: isDark ? 0 : 0.05,
+                      shadowRadius: 6,
+                      elevation: isDark ? 0 : 2,
+                    },
                   ]}
                 >
-                  <View
-                    style={{
-                      justifyContent: "center",
-                      paddingLeft: moderateScale(10),
-                    }}
-                  >
-                    <Lock size={verticalScale(24)} color={theme.text} />
+                  <View style={styles.iconContainer}>
+                    <Lock
+                      size={verticalScale(24)}
+                      color={isDark ? colors.neutral400 : colors.neutral600}
+                    />
                   </View>
                   <TextInput
                     placeholder="Enter your Password"
-                    placeholderTextColor={theme.text}
-                    style={[styles.inputStyles, { color: theme.text }]}
+                    placeholderTextColor={
+                      isDark ? colors.neutral500 : colors.neutral400
+                    }
+                    style={[
+                      styles.input,
+                      { color: isDark ? colors.neutral300 : colors.neutral700 },
+                    ]}
                     secureTextEntry
                     onChangeText={(value) => (passwordRef.current = value)}
                   />
-                </View>
+                </Animated.View>
+
+                {/* Forgot Password */}
+                <Animated.View
+                  entering={FadeInDown.delay(800)
+                    .duration(800)
+                    .easing(Easing.out(Easing.quad))}
+                >
+                  <TouchableOpacity
+                    onPress={() => router.push("/(auth)/ForgotPassword")}
+                    style={styles.forgotPasswordContainer}
+                  >
+                    <Text
+                      style={[styles.forgotPasswordText, { color: theme.text }]}
+                    >
+                      Forgot Password?
+                    </Text>
+                  </TouchableOpacity>
+                </Animated.View>
               </View>
 
-              <Text
-                style={{
-                  color: theme.text,
-                  alignSelf: "flex-end",
-                  paddingRight: 10,
-                  fontSize: verticalScale(13),
-                  fontWeight: 500,
-                }}
-                onPress={() => router.push("/(auth)/ForgotPassword")}
-              >
-                Forgot Password?
-              </Text>
-              <TouchableButton loading={loading} onPress={handleLogin}>
-                <Text
-                  style={{
-                    fontWeight: "700",
-                    fontSize: 20,
-                    color: colors.neutral900,
-                  }}
+              {/* Action Buttons */}
+              <View style={styles.footer}>
+                <Animated.View
+                  entering={FadeInDown.delay(1000)
+                    .duration(800)
+                    .easing(Easing.out(Easing.quad))}
+                  style={{ width: "100%" }}
                 >
-                  Login
-                </Text>
-              </TouchableButton>
-              <Text
-                style={{
-                  color: theme.text,
-                  alignSelf: "center",
-                  fontSize: verticalScale(13),
-                  fontWeight: 500,
-                }}
-              >
-                Dont have an Account?{" "}
-                <Text
-                  style={{ fontWeight: 500, color: colors.primary }}
-                  onPress={() => router.replace("/(auth)/Register")}
+                  <TouchableButton
+                    loading={loading}
+                    onPress={handleLogin}
+                    style={styles.loginButton}
+                  >
+                    <Text style={styles.loginButtonText}>Login</Text>
+                  </TouchableButton>
+                </Animated.View>
+
+                <Animated.View
+                  entering={FadeInDown.delay(1200)
+                    .duration(800)
+                    .easing(Easing.out(Easing.quad))}
+                  style={styles.signupContainer}
                 >
-                  SignUp
-                </Text>
-              </Text>
+                  <Text style={[styles.signupText, { color: theme.text }]}>
+                    Don't have an account?{" "}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => router.replace("/(auth)/Register")}
+                  >
+                    <Text
+                      style={[styles.signupLink, { color: colors.primary }]}
+                    >
+                      Sign Up
+                    </Text>
+                  </TouchableOpacity>
+                </Animated.View>
+              </View>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -183,29 +232,82 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
-  Container: {
+  container: {
     flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
     paddingBottom: verticalScale(30),
   },
-  text: {
-    fontSize: verticalScale(28),
+  main: {
+    paddingHorizontal: scale(24),
+  },
+  header: {
+    marginBottom: verticalScale(32),
+  },
+  titleContainer: {
+    marginTop: verticalScale(24),
+    gap: verticalScale(8),
+  },
+  welcomeText: {
+    fontSize: verticalScale(32),
     fontWeight: "800",
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: verticalScale(16),
+    fontWeight: "500",
+    marginTop: verticalScale(4),
   },
   form: {
     gap: verticalScale(20),
   },
-  inputView: {
-    height: verticalScale(52),
+  inputContainer: {
+    height: verticalScale(56),
     borderWidth: 1,
-    borderRadius: verticalScale(17),
+    borderRadius: verticalScale(16),
     flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: scale(16),
   },
-  inputStyles: {
-    paddingLeft: moderateScale(10),
-    justifyContent: "center",
+  iconContainer: {
+    marginRight: scale(12),
+  },
+  input: {
     flex: 1,
+    fontSize: verticalScale(15),
+    fontWeight: "500",
+  },
+  forgotPasswordContainer: {
+    alignSelf: "flex-end",
+  },
+  forgotPasswordText: {
+    fontSize: verticalScale(14),
+    fontWeight: "600",
+  },
+  footer: {
+    marginTop: verticalScale(32),
+    gap: verticalScale(24),
+  },
+  loginButton: {
+    // No shadow
+  },
+  loginButtonText: {
+    fontSize: verticalScale(18),
+    fontWeight: "700",
+    color: colors.neutral900,
+  },
+  signupContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  signupText: {
+    fontSize: verticalScale(14),
+    fontWeight: "500",
+  },
+  signupLink: {
+    fontSize: verticalScale(14),
+    fontWeight: "700",
   },
 });

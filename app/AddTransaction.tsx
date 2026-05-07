@@ -1,7 +1,7 @@
 import BackButton from "@/components/BackButton";
 import ImageIcon from "@/components/ImageIcon";
 import TouchableButton from "@/components/TouchableButton";
-import { expenseCategories, transactionTypes } from "@/constants/data";
+import { expenseCategories } from "@/constants/data";
 import { colors } from "@/constants/theme";
 import { useAuth } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
@@ -14,7 +14,7 @@ import {
 import { TransactionType, WalletType } from "@/types";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { router, useLocalSearchParams } from "expo-router";
-import { orderBy, where } from "firebase/firestore";
+import { orderBy, Timestamp, where } from "firebase/firestore";
 import { TrashIcon } from "phosphor-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
@@ -59,6 +59,13 @@ const AddTransaction = () => {
   const [Deleteloading, setDeleteLoading] = useState<boolean>(false);
   const [showDatePicker, setshowDatePicker] = useState<boolean>(false);
   const initialTransactionRef = useRef<string>("");
+
+  const getDate = (date: Date | string | Timestamp | undefined): Date => {
+    if (!date) return new Date();
+    if (date instanceof Timestamp) return date.toDate();
+    if (typeof date === "string") return new Date(date);
+    return date;
+  };
 
   /* Safe constraints for wallets */
   const constraints = React.useMemo(() => {
@@ -168,272 +175,331 @@ const AddTransaction = () => {
     setTransaction({ ...transaction, date: currentDate });
     setshowDatePicker(false);
   };
+
+  const renderTransactionTypeSelector = () => {
+    return (
+      <View
+        style={[
+          styles.segmentContainer,
+          { backgroundColor: isDark ? colors.neutral800 : colors.neutral100 },
+        ]}
+      >
+        {(["expense", "income"] as const).map((type) => {
+          const isActive = transaction.type === type;
+          return (
+            <Pressable
+              key={type}
+              onPress={() => setTransaction({ ...transaction, type })}
+              style={[
+                styles.segmentButton,
+                isActive && {
+                  backgroundColor: isDark ? colors.neutral700 : colors.white,
+                },
+                isActive && !isDark && styles.shadow,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.segmentText,
+                  {
+                    color: isActive
+                      ? theme.text
+                      : isDark
+                        ? colors.neutral500
+                        : colors.neutral500,
+                    fontWeight: isActive ? "700" : "500",
+                  },
+                ]}
+              >
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+    );
+  };
+
   return (
     <View
       style={[
-        styles.main,
+        styles.container,
         {
           backgroundColor: theme.background,
-          paddingTop: top + 5,
+          paddingTop: top,
+          paddingBottom: bottom,
         },
       ]}
     >
       {/* Header */}
-      <View style={[styles.headerContainer, { paddingHorizontal: scale(20) }]}>
-        <View style={styles.header}>
-          <BackButton />
-          <View
-            style={{
-              alignItems: "center",
-              flex: 1,
-              marginRight: scale(35),
-            }}
-          >
-            <Text style={[styles.headerText, { color: theme.text }]}>
-              {oldTransaction?.id ? "Update Transaction" : "New Transaction"}
-            </Text>
-          </View>
-        </View>
+      <View style={styles.header}>
+        <BackButton />
+        <Text style={[styles.headerTitle, { color: theme.text }]}>
+          {oldTransaction?.id ? "Edit Transaction" : "New Transaction"}
+        </Text>
+        <View style={styles.placeholder} />
       </View>
 
-      {/* Scrollable Content */}
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingHorizontal: scale(20),
-          gap: verticalScale(10),
-          paddingBottom: verticalScale(20),
-        }}
+        contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={[styles.date, { color: theme.text }]}>Amount</Text>
-        <TextInput
-          value={transaction.amount?.toString()}
-          keyboardType="numeric"
-          onChangeText={(value) => {
-            const numericValue = value.replace(/[^0-9]/g, "");
-            setTransaction({ ...transaction, amount: Number(numericValue) });
-          }}
-          style={{
-            height: verticalScale(54),
-            paddingLeft: verticalScale(15),
-            borderWidth: 1,
-            borderColor: theme.text,
-            borderRadius: verticalScale(15),
-            color: theme.text,
-          }}
-        />
-        <View style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
-          <Text style={[styles.date, { color: theme.text }]}>Description</Text>
-          <Text
-            style={[
-              styles.date,
-              { color: colors.neutral500, fontSize: verticalScale(14) },
-            ]}
-          >
-            (Optional)
+        {/* Amount Input (Hero) */}
+        <View style={styles.amountContainer}>
+          <Text style={[styles.currencySymbol, { color: theme.text }]}>
+            PKR
           </Text>
+          <TextInput
+            value={transaction.amount?.toString()}
+            keyboardType="numeric"
+            placeholder="0"
+            placeholderTextColor={
+              isDark ? colors.neutral600 : colors.neutral300
+            }
+            onChangeText={(value) => {
+              const numericValue = value.replace(/[^0-9]/g, "");
+              setTransaction({ ...transaction, amount: Number(numericValue) });
+            }}
+            style={[styles.amountInput, { color: theme.text }]}
+          />
         </View>
-        <TextInput
-          multiline
-          value={transaction.description}
-          onChangeText={(value) => {
-            setTransaction({ ...transaction, description: value });
-          }}
-          style={{
-            flexDirection: "row",
-            height: verticalScale(100),
-            padding: verticalScale(15),
-            borderWidth: 1,
-            borderColor: theme.text,
-            borderRadius: verticalScale(15),
-            color: theme.text,
-            textAlignVertical: "top",
-          }}
-        />
-        <Text style={[styles.date, { color: theme.text }]}>Type</Text>
-        <Dropdown
-          style={[styles.dropdownCont, { borderColor: theme.text }]}
-          selectedTextStyle={[styles.selectedTextStyle, { color: theme.text }]}
-          iconStyle={styles.iconStyle}
-          data={transactionTypes}
-          activeColor={isDark ? colors.neutral700 : colors.neutral200}
-          maxHeight={230}
-          labelField="label"
-          valueField="value"
-          value={transaction.type}
-          onChange={(item) => {
-            setTransaction({ ...transaction, type: item.value });
-          }}
-          itemTextStyle={{ color: theme.text }}
-          itemContainerStyle={[
-            styles.itemContainerStyle,
-            { backgroundColor: theme.background },
-          ]}
-          containerStyle={[
-            styles.containerStyle,
-            {
-              backgroundColor: theme.background,
-            },
-          ]}
-        />
-        <Text style={[styles.date, { color: theme.text }]}>Wallet</Text>
-        <Dropdown
-          style={[styles.dropdownCont, { borderColor: theme.text }]}
-          placeholderStyle={{ color: theme.text }}
-          selectedTextStyle={[styles.selectedTextStyle, { color: theme.text }]}
-          iconStyle={styles.iconStyle}
-          data={
-            wallets.length > 0
-              ? wallets.map((wallet) => ({
-                  label: `${wallet?.name} (Rs ${wallet?.amount})`,
-                  value: wallet?.id,
-                }))
-              : [
-                  {
-                    label: "No wallets found",
-                    value: null,
-                  },
-                ]
-          }
-          activeColor={isDark ? colors.neutral700 : colors.neutral200}
-          maxHeight={230}
-          labelField="label"
-          valueField="value"
-          value={transaction.walletId}
-          placeholder="Select Wallet"
-          onChange={(item) => {
-            setTransaction({ ...transaction, walletId: item.value || "" });
-          }}
-          itemTextStyle={{ color: theme.text }}
-          itemContainerStyle={[
-            styles.itemContainerStyle,
-            { backgroundColor: theme.background },
-          ]}
-          containerStyle={[
-            styles.containerStyle,
-            {
-              backgroundColor: theme.background,
-            },
-          ]}
-        />
-        {transaction.type == "expense" && (
-          <View style={{ gap: scale(10) }}>
-            <Text style={[styles.date, { color: theme.text }]}>
-              Expense Category
-            </Text>
+
+        {renderTransactionTypeSelector()}
+
+        <View style={styles.formGroup}>
+          {/* Wallet Selection */}
+          <View style={styles.inputContainer}>
+            <Text style={[styles.label, { color: theme.text }]}>Wallet</Text>
             <Dropdown
-              style={[styles.dropdownCont, { borderColor: theme.text }]}
-              placeholderStyle={{ color: theme.text }}
-              selectedTextStyle={[
-                styles.selectedTextStyle,
-                { color: theme.text },
+              style={[
+                styles.dropdown,
+                {
+                  backgroundColor: isDark
+                    ? colors.neutral800
+                    : colors.neutral100,
+                  borderColor: "transparent",
+                },
               ]}
-              iconStyle={styles.iconStyle}
-              data={Object.values(expenseCategories)}
-              activeColor={isDark ? colors.neutral700 : colors.neutral200}
-              maxHeight={230}
+              placeholderStyle={{
+                color: isDark ? colors.neutral400 : colors.neutral500,
+                fontSize: verticalScale(14),
+              }}
+              selectedTextStyle={{
+                color: theme.text,
+                fontSize: verticalScale(14),
+                fontWeight: "500",
+              }}
+              iconStyle={{ tintColor: theme.text }}
+              data={
+                wallets.length > 0
+                  ? wallets.map((wallet) => ({
+                      label: `${wallet?.name} (Rs ${wallet?.amount})`,
+                      value: wallet?.id,
+                    }))
+                  : [{ label: "No wallets found", value: null }]
+              }
+              maxHeight={300}
               labelField="label"
               valueField="value"
-              value={transaction.category}
-              placeholder="Select category"
-              onChange={(item) => {
-                setTransaction({
-                  ...transaction,
-                  category: item.value || "",
-                });
-              }}
+              value={transaction.walletId}
+              placeholder="Select Wallet"
+              onChange={(item) =>
+                setTransaction({ ...transaction, walletId: item.value || "" })
+              }
               itemTextStyle={{ color: theme.text }}
-              itemContainerStyle={[
-                styles.itemContainerStyle,
-                { backgroundColor: theme.background },
-              ]}
-              containerStyle={[
-                styles.containerStyle,
-                {
+              itemContainerStyle={{ backgroundColor: theme.background }}
+              containerStyle={{
+                backgroundColor: theme.background,
+                borderRadius: verticalScale(12),
+                borderColor: isDark ? colors.neutral700 : colors.neutral200,
+              }}
+              activeColor={isDark ? colors.neutral800 : colors.neutral200}
+            />
+          </View>
+
+          {/* Category Selection (Expense Only) */}
+          {transaction.type === "expense" && (
+            <View style={styles.inputContainer}>
+              <Text style={[styles.label, { color: theme.text }]}>
+                Category
+              </Text>
+              <Dropdown
+                style={[
+                  styles.dropdown,
+                  {
+                    backgroundColor: isDark
+                      ? colors.neutral800
+                      : colors.neutral100,
+                    borderColor: "transparent",
+                  },
+                ]}
+                placeholderStyle={{
+                  color: isDark ? colors.neutral400 : colors.neutral500,
+                  fontSize: verticalScale(14),
+                }}
+                selectedTextStyle={{
+                  color: theme.text,
+                  fontSize: verticalScale(14),
+                  fontWeight: "500",
+                }}
+                iconStyle={{ tintColor: theme.text }}
+                data={Object.values(expenseCategories)}
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                value={transaction.category}
+                placeholder="Select Category"
+                onChange={(item) =>
+                  setTransaction({ ...transaction, category: item.value || "" })
+                }
+                itemTextStyle={{ color: theme.text }}
+                itemContainerStyle={{ backgroundColor: theme.background }}
+                containerStyle={{
                   backgroundColor: theme.background,
+                  borderRadius: verticalScale(12),
+                  borderColor: isDark ? colors.neutral700 : colors.neutral200,
+                }}
+                activeColor={isDark ? colors.neutral800 : colors.neutral200}
+              />
+            </View>
+          )}
+
+          {/* Date Picker */}
+          <View style={styles.inputContainer}>
+            <Text style={[styles.label, { color: theme.text }]}>Date</Text>
+            <Pressable
+              style={[
+                styles.dateButton,
+                {
+                  backgroundColor: isDark
+                    ? colors.neutral800
+                    : colors.neutral100,
+                },
+              ]}
+              onPress={() => setshowDatePicker(true)}
+            >
+              <Text
+                style={{
+                  color: theme.text,
+                  fontSize: verticalScale(14),
+                  fontWeight: "500",
+                }}
+              >
+                {getDate(transaction.date).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </Text>
+            </Pressable>
+            {showDatePicker && (
+              <DateTimePicker
+                value={getDate(transaction.date)}
+                mode="date"
+                display="default"
+                onChange={onDateChange}
+              />
+            )}
+          </View>
+
+          {/* Description */}
+          <View style={styles.inputContainer}>
+            <Text style={[styles.label, { color: theme.text }]}>
+              Description <Text style={styles.optional}>(Optional)</Text>
+            </Text>
+            <TextInput
+              multiline
+              placeholder="Add a note..."
+              placeholderTextColor={
+                isDark ? colors.neutral500 : colors.neutral400
+              }
+              value={transaction.description}
+              onChangeText={(value) =>
+                setTransaction({ ...transaction, description: value })
+              }
+              style={[
+                styles.textArea,
+                {
+                  backgroundColor: isDark
+                    ? colors.neutral800
+                    : colors.neutral100,
+                  color: theme.text,
                 },
               ]}
             />
           </View>
-        )}
-        <Text style={[styles.date, { color: theme.text }]}>Date</Text>
 
-        <Pressable
-          style={{
-            height: verticalScale(54),
-            borderWidth: 1,
-            borderColor: theme.text,
-            borderRadius: verticalScale(15),
-            justifyContent: "center",
-          }}
-          onPress={() => setshowDatePicker(true)}
-        >
-          <Text
-            style={{
-              color: theme.text,
-              fontSize: verticalScale(12.5),
-              paddingLeft: scale(15),
-            }}
-          >
-            {(transaction.date as Date).toLocaleDateString()}
-          </Text>
-        </Pressable>
-
-        {showDatePicker && (
-          <DateTimePicker onChange={onDateChange} value={new Date()} />
-        )}
-
-        <View style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
-          <Text style={[styles.date, { color: theme.text }]}>Receipt</Text>
-          <Text
-            style={[
-              styles.date,
-              { color: colors.neutral500, fontSize: verticalScale(14) },
-            ]}
-          >
-            (Optional)
-          </Text>
+          {/* Receipt Upload */}
+          <View style={styles.inputContainer}>
+            <Text style={[styles.label, { color: theme.text }]}>
+              Receipt <Text style={styles.optional}>(Optional)</Text>
+            </Text>
+            <View
+              style={[
+                styles.imagePickerContainer,
+                {
+                  backgroundColor: isDark
+                    ? colors.neutral800
+                    : colors.neutral100,
+                  borderColor: isDark ? colors.neutral700 : colors.neutral200,
+                },
+              ]}
+            >
+              <ImageIcon
+                placeholder="Tap to upload receipt"
+                file={transaction.image}
+                onSelect={(file) =>
+                  setTransaction({ ...transaction, image: file })
+                }
+                onClear={() => setTransaction({ ...transaction, image: null })}
+                containerStyle={{
+                  backgroundColor: "transparent",
+                  height: "100%",
+                  width: "100%",
+                }}
+                imageStyle={{
+                  height: "100%",
+                  width: "100%",
+                  borderRadius: verticalScale(12),
+                }}
+              />
+            </View>
+          </View>
         </View>
-        <ImageIcon
-          placeholder="Upload Image"
-          file={transaction.image}
-          onSelect={(file) => {
-            setTransaction({ ...transaction, image: file });
-          }}
-          onClear={() => {
-            setTransaction({ ...transaction, image: null });
-          }}
-        />
       </ScrollView>
 
       {/* Footer */}
-      <View
-        style={{
-          borderTopWidth: 1,
-          borderTopColor: isDark ? colors.neutral700 : colors.neutral200,
-          paddingHorizontal: scale(18),
-          paddingTop: verticalScale(10),
-          paddingBottom: bottom + verticalScale(10),
-          flexDirection: "row",
-        }}
-      >
+      <View style={styles.footer}>
         {oldTransaction?.id && (
           <TouchableButton
-            style={{ marginRight: scale(8), backgroundColor: colors.rose }}
+            style={[
+              styles.deleteButton,
+              {
+                backgroundColor: isDark ? colors.neutral800 : colors.neutral100,
+              },
+            ]}
             onPress={handleDeleteTransaction}
             loading={Deleteloading}
           >
-            <TrashIcon color={"white"} />
+            <TrashIcon
+              size={verticalScale(24)}
+              color={colors.rose}
+              weight="bold"
+            />
+            <Text style={[styles.deleteButtonText, { color: colors.rose }]}>
+              Delete
+            </Text>
           </TouchableButton>
         )}
+
         <TouchableButton
           loading={loading}
           onPress={onSubmit}
-          style={{ flex: 1 }}
+          style={styles.submitButton}
         >
-          <Text style={{ fontWeight: "700", fontSize: verticalScale(16) }}>
-            {oldTransaction?.id ? "Update Transaction" : "Add Transaction"}
+          <Text style={styles.submitButtonText}>
+            {oldTransaction?.id ? "Update Transaction" : "Save Transaction"}
           </Text>
         </TouchableButton>
       </View>
@@ -444,45 +510,136 @@ const AddTransaction = () => {
 export default AddTransaction;
 
 const styles = StyleSheet.create({
-  main: { flex: 1 },
-  headerContainer: {
-    marginBottom: verticalScale(16),
+  container: {
+    flex: 1,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: scale(20),
+    paddingVertical: verticalScale(10),
   },
-  headerText: {
-    fontSize: verticalScale(18),
+  headerTitle: {
+    fontSize: verticalScale(20),
     fontWeight: "700",
-    letterSpacing: verticalScale(0.5),
+    letterSpacing: 0.5,
   },
-  dropdownCont: {
-    height: verticalScale(54),
-    borderWidth: 1,
-    paddingHorizontal: scale(15),
-    borderCurve: "continuous",
-    borderRadius: verticalScale(15),
+  placeholder: {
+    width: scale(40),
   },
-
-  selectedTextStyle: {
+  content: {
+    paddingHorizontal: scale(20),
+    paddingBottom: verticalScale(30),
+    gap: verticalScale(24),
+  },
+  amountContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: verticalScale(10),
+  },
+  currencySymbol: {
+    fontSize: verticalScale(16),
+    fontWeight: "600",
+    marginBottom: verticalScale(4),
+  },
+  amountInput: {
+    fontSize: verticalScale(40),
+    fontWeight: "700",
+    textAlign: "center",
+    padding: 0,
+  },
+  segmentContainer: {
+    flexDirection: "row",
+    borderRadius: verticalScale(12),
+    padding: scale(4),
+    height: verticalScale(45),
+  },
+  segmentButton: {
+    flex: 1,
+    borderRadius: verticalScale(10),
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  segmentText: {
     fontSize: verticalScale(14),
   },
-  iconStyle: {
-    height: verticalScale(30),
-    tintColor: colors.neutral500,
+  shadow: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
-  date: { fontWeight: 500, fontSize: verticalScale(18) },
-  itemContainerStyle: {
-    borderRadius: verticalScale(15),
-    marginHorizontal: scale(6),
+  formGroup: {
+    gap: verticalScale(16),
   },
-  containerStyle: {
-    borderRadius: verticalScale(15),
-    borderCurve: "continuous",
+  inputContainer: {
+    gap: verticalScale(8),
+  },
+  label: {
+    fontSize: verticalScale(15),
+    fontWeight: "600",
+    letterSpacing: 0.3,
+  },
+  optional: {
+    fontSize: verticalScale(13),
+    fontWeight: "400",
+    opacity: 0.6,
+  },
+  dropdown: {
+    height: verticalScale(50),
+    borderRadius: verticalScale(12),
+    paddingHorizontal: scale(12),
+  },
+  dateButton: {
+    height: verticalScale(50),
+    borderRadius: verticalScale(12),
+    paddingHorizontal: scale(12),
+    justifyContent: "center",
+  },
+  textArea: {
+    height: verticalScale(100),
+    borderRadius: verticalScale(12),
+    padding: scale(12),
+    textAlignVertical: "top",
+    fontSize: verticalScale(14),
+  },
+  imagePickerContainer: {
+    height: verticalScale(140),
+    borderRadius: verticalScale(12),
+    borderWidth: 1,
+    borderStyle: "dashed",
     overflow: "hidden",
-    top: 2,
-    paddingVertical: verticalScale(5),
-    elevation: 15,
+  },
+  footer: {
+    paddingHorizontal: scale(20),
+    paddingTop: verticalScale(10),
+    paddingBottom: verticalScale(10),
+    gap: verticalScale(12),
+  },
+  submitButton: {
+    backgroundColor: colors.primary,
+    borderRadius: verticalScale(16),
+    height: verticalScale(56),
+  },
+  submitButtonText: {
+    color: colors.neutral900,
+    fontSize: verticalScale(18),
+    fontWeight: "700",
+    letterSpacing: 0.5,
+  },
+  deleteButton: {
+    flexDirection: "row",
+    gap: scale(8),
+    height: verticalScale(56),
+    borderRadius: verticalScale(16),
+  },
+  deleteButtonText: {
+    fontSize: verticalScale(16),
+    fontWeight: "600",
   },
 });

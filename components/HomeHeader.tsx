@@ -1,31 +1,45 @@
-import { colors } from "@/constants/theme";
+import SkeletonItem from "@/components/SkeletonItem";
 import { useAuth } from "@/contexts/authContext";
 import useTheme from "@/hooks/useColorScheme";
 import { getProfileImage } from "@/services/imageServices";
 import { Image } from "expo-image";
-import { BellSimple } from "phosphor-react-native";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { scale, verticalScale } from "react-native-size-matters";
 const HomeHeader = () => {
   const { theme, isDark } = useTheme();
   const { user } = useAuth();
+
+  const isLoading = !user || !user.name;
+
   return (
     <View style={styles.header}>
       <View style={styles.userSection}>
         <View style={styles.avatarWrapper}>
-          <Image
-            source={getProfileImage(user?.image)}
-            style={styles.avatar}
-            contentFit="cover"
-            transition={100}
-          />
+          {isLoading ? (
+            <SkeletonItem width={"100%"} height={scale(48)} borderRadius={0} />
+          ) : (
+            <Image
+              source={getProfileImage(user?.image)}
+              style={styles.avatar}
+              contentFit="cover"
+              transition={100}
+            />
+          )}
         </View>
         <View>
           <Text style={[styles.greeting, { color: theme.text }]}>Hello 👋</Text>
-          <Text style={[styles.userName, { color: theme.text }]}>
-            {user?.name}
-          </Text>
+          {isLoading ? (
+            <SkeletonItem
+              width={scale(100)}
+              height={verticalScale(16)}
+              style={{ marginTop: verticalScale(4) }}
+            />
+          ) : (
+            <Text style={[styles.userName, { color: theme.text }]}>
+              {user?.name}
+            </Text>
+          )}
         </View>
       </View>
       {/* <TouchableOpacity

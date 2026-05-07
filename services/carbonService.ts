@@ -68,8 +68,9 @@ export const createOrUpdateWaterLog = async (
   logId?: string,
 ): Promise<ResponseType> => {
   try {
+    const { id, ...rest } = log;
     const logData = {
-      ...log,
+      ...rest,
       date: Timestamp.fromDate(log.date as Date),
     };
 
@@ -109,8 +110,9 @@ export const createOrUpdateElectricityLog = async (
   logId?: string,
 ): Promise<ResponseType> => {
   try {
+    const { id, ...rest } = log;
     const logData = {
-      ...log,
+      ...rest,
       date: Timestamp.fromDate(log.date as Date),
     };
 

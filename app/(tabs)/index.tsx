@@ -47,6 +47,8 @@ const Home = () => {
     fab.value = withSpring(1);
   };
 
+  const isLoading = !user || !user.name;
+
   return (
     <View style={styles.container}>
       {/* Premium Background */}
@@ -61,7 +63,6 @@ const Home = () => {
         style={StyleSheet.absoluteFill}
       />
 
-      {/* Content */}
       <View
         style={[
           styles.main,
@@ -76,21 +77,22 @@ const Home = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             gap: verticalScale(20),
-            paddingBottom: verticalScale(100),
+            paddingBottom: verticalScale(20),
           }}
           style={{ flex: 1 }}
         >
           {/* Summary Section */}
-          <View style={styles.sectionHeader}>
+          {/* <View style={styles.sectionHeader}>
             <Text style={[styles.sectionTitle, { color: theme.text }]}>
               Overview
             </Text>
-          </View>
+          </View> */}
 
           <HomeSummaryCard
             totalImpact={stats?.currentMonthImpact || 0}
             electricityUsage={stats?.currentMonthElectricity || 0}
             waterUsage={stats?.currentMonthWater || 0}
+            loading={isLoading}
           />
 
           {/* Grid Section */}
@@ -99,6 +101,14 @@ const Home = () => {
               Explore
             </Text>
           </View>
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: verticalScale(12),
+              justifyContent: "space-between",
+            }}
+          ></View>
           <View
             style={{
               flexDirection: "row",
@@ -130,8 +140,7 @@ const styles = StyleSheet.create({
     gap: verticalScale(20),
   },
   sectionHeader: {
-    marginBottom: verticalScale(-10), // pull closer to content or just spacing
-    marginTop: verticalScale(5),
+    marginBottom: verticalScale(-25), // pull closer to content or just spacing
   },
   sectionTitle: {
     fontSize: verticalScale(18),

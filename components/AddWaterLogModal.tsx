@@ -8,7 +8,7 @@ import {
   deleteWaterLog,
 } from "@/services/carbonService";
 import { WaterLogType } from "@/types";
-import * as Icons from "phosphor-react-native";
+import { Trash, X } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -35,62 +35,51 @@ const AddWaterLogModal = ({ visible, onClose, initialData }: Props) => {
 
   const isUpdate = !!initialData?.id;
 
-  const [log, setLog] = useState<WaterLogType>({
-    title: "",
-    liters: 0,
-    date: new Date(),
-    uid: user?.uid,
-  });
-
-  const [litersInput, setLitersInput] = useState<string>("");
+  const [date, setDate] = useState<Date>(new Date());
+  const [inputValue, setInputValue] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
 
   useEffect(() => {
     if (visible) {
       if (initialData) {
-        setLog({
-          id: initialData.id,
-          title: initialData.title,
-          liters: Number(initialData.liters),
-          date: new Date(initialData.date as any),
-          uid: initialData.uid,
-        });
-        setLitersInput(initialData.liters.toString());
+        setDate(
+          initialData.date && (initialData.date as any).toDate
+            ? (initialData.date as any).toDate()
+            : new Date(initialData.date as any),
+        );
+        const val = initialData.liters;
+        setInputValue(val ? val.toString() : "");
       } else {
-        // Reset form for new entry
-        setLog({
-          title: "",
-          liters: 0,
-          date: new Date(),
-          uid: user?.uid,
-        });
-        setLitersInput("");
+        // Reset
+        setDate(new Date());
+        setInputValue("");
       }
     }
   }, [visible, initialData]);
 
-  useEffect(() => {
-    if (litersInput) {
-      setLog((prev) => ({ ...prev, liters: parseFloat(litersInput) || 0 }));
-    }
-  }, [litersInput]);
-
   const onSubmit = async () => {
-    if (!log.liters || log.liters <= 0) {
+    const numVal = parseFloat(inputValue);
+    if (!numVal || numVal <= 0) {
+      Alert.alert("Error", "Please enter a valid amount of liters");
       Alert.alert("Error", "Please enter a valid amount of liters");
       return;
     }
 
-    const finalLog = {
-      ...log,
-      title: log.title || "Water Log",
-      uid: user?.uid,
-    };
+    if (!user?.uid) {
+      Alert.alert("Error", "User not authenticated");
+      return;
+    }
 
     setLoading(true);
-    const res = await createOrUpdateWaterLog(finalLog, initialData?.id);
+    const log: WaterLogType = {
+      id: initialData?.id,
+      title: "Water Log",
+      liters: numVal,
+      date: date,
+      uid: user?.uid,
+    };
+    const res = await createOrUpdateWaterLog(log, initialData?.id);
     setLoading(false);
 
     if (res.success) {
@@ -116,65 +105,48 @@ const AddWaterLogModal = ({ visible, onClose, initialData }: Props) => {
     ]);
   };
 
-  const onDateChange = (event: any, selectedDate: any) => {
-    const currentDate = selectedDate || log.date;
-    setShowDatePicker(false);
-    setLog({ ...log, date: currentDate });
-  };
-
   if (!visible) return null;
 
   return (
     <Modal
       transparent
       visible={visible}
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        {/* Backdrop */}
-        <Pressable style={[styles.backdrop]} onPress={onClose} />
+        <Pressable style={styles.backdrop} onPress={onClose} />
 
-        {/* Bottom Sheet Content */}
         <ModalKeyboardAvoidingView
           style={[
-            styles.sheetContainer,
+            styles.modalContainer,
             { backgroundColor: isDark ? colors.neutral800 : colors.white },
           ]}
         >
-          {/* Handle Bar */}
-          <View style={styles.handleBarContainer}>
-            <View style={styles.handleBar} />
-          </View>
-
+          {/* Header */}
           <View style={styles.header}>
             <Text style={[styles.headerText, { color: theme.text }]}>
-              {isUpdate ? "Update Log" : "Add Water Log"}
+              {isUpdate ? "Update Water Log" : "Add Water Log"}
             </Text>
-
-            {/* Close Button */}
             <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-              <Icons.X size={20} color={colors.neutral500} />
+              <X size={20} color={colors.neutral500} />
             </TouchableOpacity>
           </View>
 
           <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.content}
             keyboardShouldPersistTaps="handled"
           >
-            {/* <AndroidKeyboardAvoidingView extraOffset={0}> */}
-            {/* Main Input */}
             <View style={styles.inputContainer}>
               <Text style={[styles.label, { color: theme.text }]}>
                 Amount (Liters)
               </Text>
               <TextInput
-                value={litersInput}
+                value={inputValue}
                 keyboardType="numeric"
+                onChangeText={setInputValue}
                 placeholder="0"
                 placeholderTextColor={colors.neutral500}
-                onChangeText={setLitersInput}
                 style={[
                   styles.input,
                   { color: theme.text, borderColor: theme.text },
@@ -183,40 +155,30 @@ const AddWaterLogModal = ({ visible, onClose, initialData }: Props) => {
               />
             </View>
 
-            {/* Submit Button */}
-            <View
-              style={{
-                flexDirection: "row",
-                paddingTop: verticalScale(20),
-              }}
-            >
+            {/* Actions */}
+            <View style={styles.actionRow}>
               {isUpdate && (
                 <TouchableButton
-                  style={{
-                    backgroundColor: colors.rose,
-                    marginRight: 10,
-                    width: 50,
-                  }}
+                  style={styles.deleteBtn}
                   onPress={handleDelete}
                   loading={deleteLoading}
                 >
-                  <Icons.TrashIcon color="white" />
+                  <Trash size={scale(20)} color="white" />
                 </TouchableButton>
               )}
               <TouchableButton
                 onPress={onSubmit}
                 loading={loading}
-                style={{ flex: 1, backgroundColor: colors.primaryLight }}
+                style={[
+                  styles.saveBtn,
+                  { backgroundColor: colors.primaryLight },
+                ]}
               >
-                <Text style={styles.btnText}>
+                <Text style={[styles.btnText, { color: "white" }]}>
                   {isUpdate ? "Update" : "Save Log"}
                 </Text>
               </TouchableButton>
             </View>
-
-            {/* Extra space for keyboard */}
-            {/* <View style={{ height: verticalScale(20) }} /> */}
-            {/* </AndroidKeyboardAvoidingView> */}
           </ScrollView>
         </ModalKeyboardAvoidingView>
       </View>
@@ -227,56 +189,43 @@ const AddWaterLogModal = ({ visible, onClose, initialData }: Props) => {
 export default AddWaterLogModal;
 
 const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: scale(20),
+  },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.5)",
   },
-  overlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  sheetContainer: {
-    borderTopLeftRadius: scale(25),
-    borderTopRightRadius: scale(25),
-    paddingTop: verticalScale(10),
-    paddingHorizontal: scale(20),
-    maxHeight: "85%",
+  modalContainer: {
     width: "100%",
+    borderRadius: scale(20),
+    padding: scale(20),
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
     shadowRadius: 10,
     elevation: 10,
   },
-  handleBarContainer: {
-    alignItems: "center",
-    marginBottom: verticalScale(10),
-  },
-  handleBar: {
-    width: scale(50),
-    height: verticalScale(5),
-    backgroundColor: colors.neutral300,
-    borderRadius: 10,
-  },
   header: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: verticalScale(20),
   },
   headerText: {
     fontSize: verticalScale(18),
     fontWeight: "700",
-    letterSpacing: 0.5,
   },
   closeBtn: {
-    padding: 5,
+    padding: scale(5),
     backgroundColor: colors.neutral200,
-    borderRadius: 20,
+    borderRadius: scale(20),
   },
-  scrollContent: {
+  content: {
     gap: verticalScale(20),
-    paddingBottom: verticalScale(10),
   },
   inputContainer: {
     gap: verticalScale(8),
@@ -288,13 +237,26 @@ const styles = StyleSheet.create({
   input: {
     height: verticalScale(50),
     borderWidth: 1,
-    borderRadius: verticalScale(15),
+    borderRadius: verticalScale(12),
     paddingHorizontal: scale(15),
     fontSize: verticalScale(16),
   },
+  actionRow: {
+    flexDirection: "row",
+    paddingTop: verticalScale(10),
+    gap: scale(10),
+  },
+  deleteBtn: {
+    backgroundColor: colors.rose,
+    width: scale(50),
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  saveBtn: {
+    flex: 1,
+  },
   btnText: {
+    fontWeight: "700",
     fontSize: verticalScale(16),
-    fontWeight: "bold",
-    color: "white",
   },
 });

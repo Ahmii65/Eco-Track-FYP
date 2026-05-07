@@ -8,7 +8,7 @@ import {
   deleteElectricityLog,
 } from "@/services/carbonService";
 import { ElectricityLogType } from "@/types";
-import { TrashIcon, X } from "phosphor-react-native";
+import { Trash, X } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -35,61 +35,51 @@ const AddElectricityLogModal = ({ visible, onClose, initialData }: Props) => {
 
   const isUpdate = !!initialData?.id;
 
-  const [log, setLog] = useState<ElectricityLogType>({
-    title: "",
-    kwh: 0,
-    date: new Date(),
-    uid: user?.uid,
-  });
-
-  const [kwhInput, setKwhInput] = useState<string>("");
+  const [date, setDate] = useState<Date>(new Date());
+  const [inputValue, setInputValue] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (visible) {
       if (initialData) {
-        setLog({
-          id: initialData.id,
-          title: initialData.title,
-          kwh: Number(initialData.kwh),
-          date: new Date(initialData.date as any),
-          uid: initialData.uid,
-        });
-        setKwhInput(initialData.kwh.toString());
+        setDate(
+          initialData.date && (initialData.date as any).toDate
+            ? (initialData.date as any).toDate()
+            : new Date(initialData.date as any),
+        );
+        const val = initialData.kwh;
+        setInputValue(val ? val.toString() : "");
       } else {
-        // Reset form for new entry
-        setLog({
-          title: "",
-          kwh: 0,
-          date: new Date(),
-          uid: user?.uid,
-        });
-        setKwhInput("");
+        // Reset
+        setDate(new Date());
+        setInputValue("");
       }
     }
   }, [visible, initialData]);
 
-  useEffect(() => {
-    if (kwhInput) {
-      setLog((prev) => ({ ...prev, kwh: parseFloat(kwhInput) || 0 }));
-    }
-  }, [kwhInput]);
-
   const onSubmit = async () => {
-    if (!log.kwh || log.kwh <= 0) {
+    const numVal = parseFloat(inputValue);
+    if (!numVal || numVal <= 0) {
+      Alert.alert("Error", "Please enter a valid amount of kWh");
       Alert.alert("Error", "Please enter a valid amount of kWh");
       return;
     }
 
-    const finalLog = {
-      ...log,
-      title: log.title || "Electricity Log",
-      uid: user?.uid,
-    };
+    if (!user?.uid) {
+      Alert.alert("Error", "User not authenticated");
+      return;
+    }
 
     setLoading(true);
-    const res = await createOrUpdateElectricityLog(finalLog, initialData?.id);
+    const log: ElectricityLogType = {
+      id: initialData?.id,
+      title: "Electricity Log",
+      kwh: numVal,
+      date: date,
+      uid: user?.uid,
+    };
+    const res = await createOrUpdateElectricityLog(log, initialData?.id);
     setLoading(false);
 
     if (res.success) {
@@ -121,52 +111,42 @@ const AddElectricityLogModal = ({ visible, onClose, initialData }: Props) => {
     <Modal
       transparent
       visible={visible}
-      animationType="slide"
+      animationType="fade"
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        {/* Backdrop */}
-        <Pressable style={[styles.backdrop]} onPress={onClose} />
+        <Pressable style={styles.backdrop} onPress={onClose} />
 
-        {/* Bottom Sheet Content */}
         <ModalKeyboardAvoidingView
           style={[
-            styles.sheetContainer,
+            styles.modalContainer,
             { backgroundColor: isDark ? colors.neutral800 : colors.white },
           ]}
         >
-          {/* Handle Bar */}
-          <View style={styles.handleBarContainer}>
-            <View style={styles.handleBar} />
-          </View>
-
+          {/* Header */}
           <View style={styles.header}>
             <Text style={[styles.headerText, { color: theme.text }]}>
-              {isUpdate ? "Update Log" : "Add Elec Log"}
+              {isUpdate ? "Update Electricity Log" : "Add Electricity Log"}
             </Text>
-
-            {/* Close Button */}
             <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
               <X size={20} color={colors.neutral500} />
             </TouchableOpacity>
           </View>
 
           <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.content}
             keyboardShouldPersistTaps="handled"
           >
-            {/* Main Input */}
             <View style={styles.inputContainer}>
               <Text style={[styles.label, { color: theme.text }]}>
                 Amount (kWh)
               </Text>
               <TextInput
-                value={kwhInput}
+                value={inputValue}
                 keyboardType="numeric"
+                onChangeText={setInputValue}
                 placeholder="0"
                 placeholderTextColor={colors.neutral500}
-                onChangeText={setKwhInput}
                 style={[
                   styles.input,
                   { color: theme.text, borderColor: theme.text },
@@ -175,30 +155,21 @@ const AddElectricityLogModal = ({ visible, onClose, initialData }: Props) => {
               />
             </View>
 
-            {/* Submit Button */}
-            <View
-              style={{
-                flexDirection: "row",
-                paddingTop: verticalScale(20),
-              }}
-            >
+            {/* Actions */}
+            <View style={styles.actionRow}>
               {isUpdate && (
                 <TouchableButton
-                  style={{
-                    backgroundColor: colors.rose,
-                    marginRight: 10,
-                    width: 50,
-                  }}
+                  style={styles.deleteBtn}
                   onPress={handleDelete}
                   loading={deleteLoading}
                 >
-                  <TrashIcon color="white" />
+                  <Trash size={scale(20)} color="white" />
                 </TouchableButton>
               )}
               <TouchableButton
                 onPress={onSubmit}
                 loading={loading}
-                style={{ flex: 1, backgroundColor: colors.yellow }} // Yellow for Electricity
+                style={[styles.saveBtn, { backgroundColor: colors.yellow }]}
               >
                 <Text style={[styles.btnText, { color: colors.neutral900 }]}>
                   {isUpdate ? "Update" : "Save Log"}
@@ -215,56 +186,43 @@ const AddElectricityLogModal = ({ visible, onClose, initialData }: Props) => {
 export default AddElectricityLogModal;
 
 const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: scale(20),
+  },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.5)",
   },
-  overlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  sheetContainer: {
-    borderTopLeftRadius: scale(25),
-    borderTopRightRadius: scale(25),
-    paddingTop: verticalScale(10),
-    paddingHorizontal: scale(20),
-    maxHeight: "85%",
+  modalContainer: {
     width: "100%",
+    borderRadius: scale(20),
+    padding: scale(20),
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
     shadowRadius: 10,
     elevation: 10,
   },
-  handleBarContainer: {
-    alignItems: "center",
-    marginBottom: verticalScale(10),
-  },
-  handleBar: {
-    width: scale(50),
-    height: verticalScale(5),
-    backgroundColor: colors.neutral300,
-    borderRadius: 10,
-  },
   header: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: verticalScale(20),
   },
   headerText: {
     fontSize: verticalScale(18),
     fontWeight: "700",
-    letterSpacing: 0.5,
   },
   closeBtn: {
-    padding: 5,
+    padding: scale(5),
     backgroundColor: colors.neutral200,
-    borderRadius: 20,
+    borderRadius: scale(20),
   },
-  scrollContent: {
+  content: {
     gap: verticalScale(20),
-    paddingBottom: verticalScale(10),
   },
   inputContainer: {
     gap: verticalScale(8),
@@ -276,13 +234,26 @@ const styles = StyleSheet.create({
   input: {
     height: verticalScale(50),
     borderWidth: 1,
-    borderRadius: verticalScale(15),
+    borderRadius: verticalScale(12),
     paddingHorizontal: scale(15),
     fontSize: verticalScale(16),
   },
+  actionRow: {
+    flexDirection: "row",
+    paddingTop: verticalScale(10),
+    gap: scale(10),
+  },
+  deleteBtn: {
+    backgroundColor: colors.rose,
+    width: scale(50),
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  saveBtn: {
+    flex: 1,
+  },
   btnText: {
+    fontWeight: "700",
     fontSize: verticalScale(16),
-    fontWeight: "bold",
-    color: "white",
   },
 });

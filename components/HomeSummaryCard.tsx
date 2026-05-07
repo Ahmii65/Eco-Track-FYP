@@ -1,3 +1,4 @@
+import SkeletonItem from "@/components/SkeletonItem";
 import { colors } from "@/constants/theme";
 import useTheme from "@/hooks/useColorScheme";
 import { LinearGradient } from "expo-linear-gradient";
@@ -10,12 +11,14 @@ interface HomeSummaryCardProps {
   totalImpact: number;
   electricityUsage: number;
   waterUsage: number;
+  loading?: boolean;
 }
 
 const HomeSummaryCard = ({
   totalImpact = 0,
   electricityUsage = 0,
   waterUsage = 0,
+  loading = false,
 }: HomeSummaryCardProps) => {
   const { theme, isDark } = useTheme();
   const [warning, setwarning] = useState<boolean>(false);
@@ -67,9 +70,17 @@ const HomeSummaryCard = ({
               This Month
             </Text>
           </View>
-          <Text style={[styles.mainValue, { color: theme.text }]}>
-            {displayImpact} <Text style={styles.unit}>kgCO2</Text>
-          </Text>
+          {loading ? (
+            <SkeletonItem
+              width={scale(100)}
+              height={verticalScale(32)}
+              style={{ marginTop: verticalScale(5) }}
+            />
+          ) : (
+            <Text style={[styles.mainValue, { color: theme.text }]}>
+              {displayImpact} <Text style={styles.unit}>kgCO2</Text>
+            </Text>
+          )}
         </View>
 
         {/* Tri-color Progress Bar */}
@@ -102,9 +113,13 @@ const HomeSummaryCard = ({
               <Drop size={verticalScale(14)} color="#0ea5e9" weight="fill" />
             </View>
             <View>
-              <Text style={[styles.statValue, { color: theme.text }]}>
-                {waterUsage} L
-              </Text>
+              {loading ? (
+                <SkeletonItem width={scale(60)} height={verticalScale(16)} />
+              ) : (
+                <Text style={[styles.statValue, { color: theme.text }]}>
+                  {waterUsage} L
+                </Text>
+              )}
               <Text style={styles.statLabel}>Water</Text>
             </View>
           </View>
@@ -131,9 +146,13 @@ const HomeSummaryCard = ({
               />
             </View>
             <View>
-              <Text style={[styles.statValue, { color: theme.text }]}>
-                {electricityUsage} kWh
-              </Text>
+              {loading ? (
+                <SkeletonItem width={scale(60)} height={verticalScale(16)} />
+              ) : (
+                <Text style={[styles.statValue, { color: theme.text }]}>
+                  {electricityUsage} kWh
+                </Text>
+              )}
               <Text style={styles.statLabel}>Electricity</Text>
             </View>
           </View>
@@ -190,6 +209,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,
+    marginTop: verticalScale(10),
   },
   header: {
     marginBottom: verticalScale(10),
